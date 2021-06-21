@@ -119,7 +119,7 @@
 	<app-user-name *ngIf="clientService.isAuthenticated() | async" [user]="clientService" [matMenuTriggerFor]="personalMenu"></app-user-name>	
 	<mat-divider class="my-2"></mat-divider>
 
-	<div *ngIf="!(clientService.isAuthenticated() | async)"> 
+	<div *ngIf="(clientService.isAuthenticated() | async) === false"> 
 		<app-twitch-button></app-twitch-button>
 	</div>
 

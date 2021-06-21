@@ -11,7 +11,7 @@
 			<span>{{opt.label | titlecase }}</span>
 		</button>
 
-		<button mat-menu-item [matMenuTriggerFor]="userContextMenu" *ngIf="!!(contextEmote?.getOwner() | async)">
+		<button mat-menu-item [matMenuTriggerFor]="userContextMenu" *ngIf="(contextEmote?.getOwner() | async) !== undefined">
 			<app-user-name  [showAvatar]="false" [clickable]="false" [user]="contextEmote?.getOwner() | async"></app-user-name>
 		</button>
 	</ng-template>

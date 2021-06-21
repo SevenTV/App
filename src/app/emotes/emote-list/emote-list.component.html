@@ -17,7 +17,7 @@
 			<!-- List Emote Cards -->
 			<div #emotesContainer class="emotes-container d-flex align-items-center" [@emotes]="emotes | async" [appColor]="themingService.bg.lighten(.18)" [isBackground]="true">
 				<div class="d-flex flex-fill">
-					<div class="w-100 d-flex justify-content-center" *ngIf="(isEmpty() | async) && !(loading | async)">
+					<div class="w-100 d-flex justify-content-center" *ngIf="(isEmpty() | async) && (loading | async) === false">
 						<h3>There is nothing here</h3>
 					</div>
 
