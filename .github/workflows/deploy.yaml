@@ -3,6 +3,7 @@ name: Build App
 on:
   push:
     branches: [master]
+    pull_requests:
 
   workflow_dispatch:
     inputs:
