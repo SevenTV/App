@@ -1,11 +1,15 @@
 <div class="user-home">
 	<!-- User's Channel Emotes -->
 	<div class="heading" [appColor]="themingService.primary.darken(.075)" [isBackground]="true">
-		Emotes Enabled ({{channelEmotes.length || 0}}/{{((user | async)?.getEmoteSlots() | async) || 0}})
+		Emotes Enabled ({{(channelCount | async) || 0}}/{{((user | async)?.getEmoteSlots() | async) || 0}})
 	</div>
 	<div class="channel-emote-list" [appColor]="themingService.bg.lighten(.1)" [isBackground]="true">
-		<div class="is-emote-card" *ngFor="let emote of channelEmotes; trackBy: trackBy">
+		<div class="is-emote-card" *ngFor="let emote of channelEmotes | async | slice :0:channelShown; trackBy: trackBy; let last = last;">
 			<app-emote-card [blur]="isBlurred(emote)" [routerLink]="['/emotes', emote.getID()]" [size]="8" [emote]="emote" [contextMenu]="contextMenu.emoteMenu" (openContext)="contextMenu.contextEmote = $event"></app-emote-card>
+		</div>
+
+		<div *ngIf="channelShown < (channelCount.getValue())">
+			<div *ngTemplateOutlet="showMore; context: { setName: 'channel' }"></div>
 		</div>
 	</div>
 
@@ -16,8 +20,12 @@
 		Emotes by {{(user | async)?.getUsername() | async}} ({{(ownedCount | async) || 0}})
 	</div>
 	<div class="channel-emote-list" [appColor]="themingService.bg.lighten(.1)" [isBackground]="true">
-		<div class="is-emote-card" *ngFor="let emote of ownedEmotes; trackBy: trackBy">
+		<div class="is-emote-card" *ngFor="let emote of ownedEmotes | async | slice :0:ownedShown; trackBy: trackBy">
 			<app-emote-card [blur]="isBlurred(emote)" [routerLink]="['/emotes', emote.getID()]" [size]="8" [emote]="emote" [contextMenu]="contextMenu.emoteMenu" (openContext)="contextMenu.contextEmote = $event"></app-emote-card>
+		</div>
+
+		<div *ngIf="ownedShown < (ownedCount.getValue())">
+			<div *ngTemplateOutlet="showMore; context: { setName: 'owned' }"></div>
 		</div>
 	</div>
 
@@ -33,10 +41,16 @@
 	</div>
 </div>
 
-<ng-template #contextblock let-headerName="headerName">
-    <div class="ctx-heading mat-elevation-z2" [appColor]="themingService.accent" [isBackground]="true">
-        {{ headerName }}
-    </div>
+<ng-template #showMore let-setName="setName">
+    <div class="show-more-card"
+		matRipple
+		[matRippleColor]="themingService.accent.opaquer(-.33).rgb().string()"
+		[appColor]="themingService.bg.darken(.2)"
+		[isBackground]="true"
+		(click)="showMoreOf(setName)"
+	>
+		<div><span>Show More</span></div>
+	</div>
 </ng-template>
 
 <app-ctx-menu #contextMenu></app-ctx-menu>

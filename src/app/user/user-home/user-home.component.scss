@@ -30,3 +30,21 @@
 .user-home {
 	display: block;
 }
+
+.show-more-card {
+	margin: 1em;
+	height: 8em;
+	width: 8em;
+	cursor: pointer;
+	border-style: solid;
+	border-color: white;
+	border-width: 1px;
+	
+	:first-child {
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+	}
+}
