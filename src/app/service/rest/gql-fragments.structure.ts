@@ -55,7 +55,8 @@ export namespace GQLFragments {
 			type,
 			data,
 			id
-		}
+		},
+		reason
 	`;
 
 	export const FullUser = (

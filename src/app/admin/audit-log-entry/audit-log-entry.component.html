@@ -21,6 +21,11 @@
 				->
 				<span> {{change.getNewValue()}} </span>
 			</div>
+
+			<div class="audit-reason mt-2" *ngIf="hasReason() | async">
+				<span>Reason: </span>
+				<span>{{entry?.getReason() | async}}</span>
+			</div>
 		</div>
 	</mat-expansion-panel>
 </div>
