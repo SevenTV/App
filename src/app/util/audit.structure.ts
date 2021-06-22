@@ -75,21 +75,29 @@ export class AuditLogEntry extends Structure<'audit'> {
 		let value = 'Error: Unknown Action Type';
 
 		switch (this.type) {
+			case DataStructure.AuditLog.Entry.Type.EMOTE_CREATE:
+				value = 'created this emote';
+				break;
 			case DataStructure.AuditLog.Entry.Type.EMOTE_EDIT:
 				value = 'edited this emote';
 				break;
-			case DataStructure.AuditLog.Entry.Type.USER_CHANNEL_EMOTE_ADD:
-				value = `added an emote`;
+			case DataStructure.AuditLog.Entry.Type.EMOTE_DELETE:
+				value = 'deleted this emote';
 				break;
-
+			case DataStructure.AuditLog.Entry.Type.USER_CHANNEL_EMOTE_ADD:
+				value = `enabled an emote`;
+				break;
 			case DataStructure.AuditLog.Entry.Type.USER_CHANNEL_EMOTE_REMOVE:
-				value = `removed an emote`;
+				value = `disabled an emote`;
 				break;
 			case DataStructure.AuditLog.Entry.Type.USER_CHANNEL_EDITOR_ADD:
 				value = 'added a user as an editor';
 				break;
 			case DataStructure.AuditLog.Entry.Type.USER_CHANNEL_EDITOR_REMOVE:
 				value = 'revoked a user\'s editor privileges';
+				break;
+			case DataStructure.AuditLog.Entry.Type.USER_CHANNEL_EMOTE_EDIT:
+				value = 'edited channel emote properties';
 				break;
 			default:
 				break;
@@ -159,7 +167,7 @@ export namespace AuditLogEntry {
 		key = '';
 		values: any[] = [];
 
-		constructor(private log: AuditLogEntry, readonly change: DataStructure.AuditLog.Entry.Change) {
+		constructor(public log: AuditLogEntry, readonly change: DataStructure.AuditLog.Entry.Change) {
 			this.key = change.key;
 
 			this.values = [
