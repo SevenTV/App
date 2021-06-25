@@ -13,7 +13,8 @@
     "e2e": "ng e2e",
     "dev:ssr": "ng run seventv-app:serve-ssr",
     "serve:ssr": "node dist/seventv-app/server/main.js",
-    "build:ssr": "ng build --prod ---aot --vendor-chunk --common-chunk --delete-output-path --build-optimizer --optimization --aot && ng run seventv-app:server:production",
+    "build:ssr": "ng build --configuration=production ---aot --vendor-chunk --common-chunk --delete-output-path --build-optimizer --optimization --aot && ng run seventv-app:server:production",
+    "build-stage:ssr": "ng build --configuration=stage ---aot --vendor-chunk --common-chunk --delete-output-path --build-optimizer --optimization --aot && ng run seventv-app:server:stage",
     "prerender": "ng run seventv-app:prerender"
   },
   "private": true,
@@ -41,12 +42,13 @@
     "ngx-cookie-service": "^11.0.2",
     "ngx-markdown": "^12.0.1",
     "rxjs": "~6.6.0",
+    "ssr-window": "^3.0.0",
     "tslib": "^2.0.0",
     "twitch-player": "^2.0.2",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^12.0.3",
+    "@angular-devkit/build-angular": "^12.1.0",
     "@angular/cli": "~12.0.3",
     "@angular/compiler-cli": "~12.0.3",
     "@nguniversal/builders": "^12.0.1",
