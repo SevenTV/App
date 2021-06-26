@@ -133,7 +133,15 @@ export class EmoteListComponent implements OnInit, AfterViewInit, OnDestroy {
 		const size = this.calculateSizedRows();
 		return this.restService.v2.SearchEmotes((this.pageOptions?.page ?? (page - 1)) + 1, size ?? 16, options ?? this.currentSearchOptions).pipe(
 			takeUntil(this.newPage.pipe(take(1))),
-			tap(res => this.totalEmotes.next(res?.total_estimated_size ?? 0)),
+			tap(res => {
+				this.totalEmotes.next(res?.total_estimated_size ?? 0);
+				this.skipNextSearchCheck = true;
+				this.paginator?.page.next({
+					length: res?.total_estimated_size ?? 0,
+					pageIndex: this.paginator?.pageIndex ?? 0,
+					pageSize: this.paginator?.pageSize ?? 0,
+			   });
+			}),
 			delay(200),
 			map(res => res?.emotes ?? []),
 			mergeAll(),

@@ -28,18 +28,18 @@
 					<div class="d-flex flex-wrap justify-content-center">
 						<div (click)="selectEmote(emoteEl, emote)"  #emoteEl *ngFor="let emote of emotes | async" class="is-emote-card">
 							<app-emote-card [emote]="emote" [contextMenu]="contextMenu.emoteMenu" (openContext)="onOpenCardContextMenu($event)">
-				
+
 							</app-emote-card>
 						</div>
 					</div>
 				</div>
 			</div>
-		
+
 			<!-- Pagination menu -->
 			<mat-paginator #paginator (page)="onPageEvent($event)" [@fadeout]="selecting | async"
-				[showFirstLastButtons]="true" [pageIndex]="pageOptions?.page" [length]="pageOptions?.length"
+				[showFirstLastButtons]="true" [pageIndex]="pageOptions?.page"
 				[length]="totalEmotes | async" [pageSize]="pageSize | async">
-		
+
 			</mat-paginator>
 		</div>
 	</div>
