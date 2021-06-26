@@ -29,7 +29,7 @@ export class ChatterinoDialogComponent implements OnInit {
 				label: 'Linux',
 				icon: 'linux',
 				svgIcon: true,
-				url: 'https://github.com/SevenTV/chatterino7/releases/download/7.3.2/Chatterino-x86_64.AppImage'
+				url: 'https://github.com/SevenTV/chatterino7/releases/download/7.3.3/Chatterino-x86_64.AppImage'
 			},
 			{
 				label: 'Windows',
@@ -41,7 +41,7 @@ export class ChatterinoDialogComponent implements OnInit {
 				label: 'MacOS',
 				icon: 'apple',
 				svgIcon: true,
-				url: 'https://github.com/SevenTV/chatterino7/releases/download/7.3.2/Chatterino.dmg'
+				url: 'https://github.com/SevenTV/chatterino7/releases/download/7.3.3/Chatterino.dmg'
 			},
 			{
 				label: 'Nightly Build',
