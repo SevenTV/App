@@ -20,7 +20,7 @@ jobs:
       - uses: octokit/request-action@v2.x
         id: fix_pr_branch
         with:
-          route: POST /repos/{repo}/pulls/{event_id}
+          route: PATCH /repos/{repo}/pulls/{event_id}
           repo: ${{ github.repository }}
           event_id: ${{ github.event.number }}
           body: |
