@@ -23,8 +23,7 @@ jobs:
           route: PATCH /repos/{repo}/pulls/{event_id}
           repo: ${{ github.repository }}
           event_id: ${{ github.event.number }}
-          body: |
-            { "base": "dev" }
+          base: dev
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
