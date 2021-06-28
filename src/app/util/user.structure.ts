@@ -171,7 +171,8 @@ export class UserStructure extends Structure<'user'> {
 		return this.dataOnce().pipe(
 			map(data => data?.editor_in ?? []),
 			mergeAll(),
-			map(u => this.dataService.get('user', u)[0]),
+			map(u => this.dataService.add('user', u)),
+			mergeAll(),
 			toArray()
 		);
 	}
