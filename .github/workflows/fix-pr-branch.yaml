@@ -11,6 +11,7 @@ jobs:
   fix:
     name: Change Pull Request Base Branch
     runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'allow any branch') }}
 
     steps:
       - uses: octokit/request-action@v2.x
