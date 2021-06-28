@@ -1,10 +1,11 @@
 name: Fix Base Branch
 
 on:
-  pull_request:
-    branches:
-      - master
-      - stage
+  push:
+    pull_request:
+      branches:
+        - master
+        - stage
 
 jobs:
   fix:
