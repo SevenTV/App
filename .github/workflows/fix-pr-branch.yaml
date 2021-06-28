@@ -28,5 +28,3 @@ jobs:
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-        run: "echo fixing base branch of pull request ${{ github.event.number }}"
