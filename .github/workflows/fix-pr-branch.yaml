@@ -2,10 +2,6 @@ name: Fix Base Branch
 
 on:
   push:
-    branches:
-      - master
-      - stage
-
   pull_request:
     branches:
       - master
