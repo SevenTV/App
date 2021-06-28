@@ -1,0 +1,27 @@
+name: Fix Base Branch
+
+on:
+  pull_request:
+    branches:
+      - master
+      - stage
+
+jobs:
+  fix:
+    name: Change Pull Request Base Branch
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: octokit/request-action@v2.x
+        id: fix_pr_branch
+        with:
+          route: POST /repos/{repo}/pulls/{event_id}
+          repo: ${{ github.repository }}
+          event_id: ${{ github.event.number }}
+          body: |
+            { "base": "dev" }
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+        run: "echo fixing base branch of pull request ${{ github.event.number }}"
