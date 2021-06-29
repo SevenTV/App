@@ -247,6 +247,24 @@ export class UserStructure extends Structure<'user'> {
 		);
 	}
 
+	isLive(): Observable<boolean> {
+		return this.dataOnce().pipe(
+			map(d => d?.broadcast?.type === 'live')
+		);
+	}
+
+	getBroadcast(): Observable<DataStructure.Broadcast | null> {
+		return this.dataOnce().pipe(
+			map(d => d?.broadcast ?? null)
+		);
+	}
+
+	getFollowerCount(): Observable<number> {
+		return this.dataOnce().pipe(
+			map(d => d?.follower_count ?? 0)
+		);
+	}
+
 	ban(expireAt: Date, reason = ''): Observable<void> {
 		return this.getRestService().v2.BanUser(this.id, expireAt, reason);
 	}

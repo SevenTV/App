@@ -1,5 +1,6 @@
 
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { DataStructure } from '@typings/typings/DataStructure';
 import { asapScheduler, asyncScheduler, BehaviorSubject, from, iif, noop, Observable, of, scheduled, Subject } from 'rxjs';
 import { concatAll, filter, map, mapTo, mergeMap, switchMap, take, takeUntil, tap, toArray } from 'rxjs/operators';
 import { ClientService } from 'src/app/service/client.service';
@@ -24,6 +25,8 @@ export class UserHomeComponent implements OnInit, OnDestroy {
 	ownedEmotes = new BehaviorSubject<EmoteStructure[]>([]);
 	ownedShown = 50;
 	ownedCount = new BehaviorSubject(0);
+	isLive = new BehaviorSubject(false);
+	broadcast = new BehaviorSubject<DataStructure.Broadcast | null>(null);
 
 	auditEntries = [] as AuditLogEntry[];
 
@@ -96,6 +99,12 @@ export class UserHomeComponent implements OnInit, OnDestroy {
 
 			switchMap(user => user.getAuditEntries().pipe(
 				tap(entries => this.auditEntries = entries),
+				mapTo(user)
+			)),
+			switchMap(user => user.isLive().pipe(
+				map(live => this.isLive.next(live)),
+				switchMap(() => user.getBroadcast()),
+				map(broadcast => this.broadcast.next(broadcast)),
 				mapTo(user)
 			)),
 			switchMap(user => scheduled([

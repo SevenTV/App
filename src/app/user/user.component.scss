@@ -75,8 +75,6 @@
 
         margin-top: 1em;
         margin-right: 1em;
-        margin-left: 1em;
-        border-top-left-radius: 1em;
         border-top-right-radius: 1em;
         
         .channel-editor {
@@ -92,8 +90,6 @@
 .content {
     display: block;
     overflow-y: auto;
-    padding: 2.5%;
-    margin: 1em;
 
     .ctx-block {
         margin: 1em;

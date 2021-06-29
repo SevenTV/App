@@ -109,7 +109,8 @@ export class UserComponent implements OnInit, OnDestroy {
 				includeEditorIn: true,
 				includeOwnedEmotes: true,
 				includeFullEmotes: true,
-				includeAuditLogs: true
+				includeAuditLogs: true,
+				includeStreamData: true
 			}).pipe(
 				map(res => this.dataService.add('user', res.user)[0])
 			)),
