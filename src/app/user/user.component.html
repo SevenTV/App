@@ -70,7 +70,7 @@
     </div>
 
     <!-- Content -->
-    <div class="content flex-fill" *ngIf="!!(user | async)">
+    <div class="content flex-fill" *ngIf="(user | async) !== null">
         <router-outlet></router-outlet>
     </div>
 </div>
