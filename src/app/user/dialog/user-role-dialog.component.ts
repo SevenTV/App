@@ -3,7 +3,7 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { DataService } from 'src/app/service/data.service';
 import { RoleStructure } from 'src/app/util/role.structure';
 import { UserStructure } from 'src/app/util/user.structure';
@@ -11,18 +11,32 @@ import { UserStructure } from 'src/app/util/user.structure';
 @Component({
 	selector: 'app-user-role-dialog',
 	template: `
-		<h3 mat-dialog-title> Editing {{ data.user.getUsername() | async }} </h3>
+		<h3 mat-dialog-title> Change {{ data.user.getUsername() | async }}'s Role </h3>
 
-		<form [formGroup]="form">
+		<form [formGroup]="form" mat-dialog-content>
 			<mat-form-field appearance="outline">
 				<mat-label> Role </mat-label>
-				<mat-select>
-					<mat-option *ngFor="let role of roles | async">
-						<span [style.color]="role.getHexColor() | async"> {{ role.getName() | async }} </span>
+				<mat-select formControlName="role">
+					<mat-option *ngFor="let role of roles | async" [value]="role" [class.d-none]="(role.getName() | async) == ''">
+						<span [style.color]="role.getHexColor() | async"> {{ (role.getName() | async) || 'No Role' }} </span>
 					</mat-option>
 				</mat-select>
 			</mat-form-field>
 		</form>
+
+		<div mat-dialog-actions>
+			<button mat-stroked-button color="accent" [mat-dialog-close]="form.get('role')?.value?.id">
+				SET ROLE
+			</button>
+
+			<button mat-stroked-button color="warn" [mat-dialog-close]="''">
+				REVOKE ROLE
+			</button>
+
+			<button mat-flat-button mat-dialog-close>
+				CANCEL
+			</button>
+		</div>
 	`
 })
 
@@ -32,7 +46,7 @@ export class UserRoleDialogComponent implements OnInit, OnDestroy {
 		reason: new FormControl('')
 	});
 
-	roles = new Subject<RoleStructure[]>();
+	roles = new BehaviorSubject<RoleStructure[]>([]);
 
 	constructor(
 		private dataService: DataService,
@@ -41,7 +55,7 @@ export class UserRoleDialogComponent implements OnInit, OnDestroy {
 	) { }
 
 	ngOnInit(): void {
-		const roles = this.dataService.getAll('role');
+		const roles = this.dataService.getAll('role').sort((a, b) => b.getPosition() - a.getPosition());
 		if (roles.length > 0) {
 			this.roles.next(roles);
 		}

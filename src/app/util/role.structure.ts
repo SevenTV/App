@@ -3,7 +3,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 
 export class RoleStructure {
-	private id: string | undefined;
+	id: string | undefined;
 	private data = new BehaviorSubject<DataStructure.Role | (null | undefined)>(undefined);
 
 	constructor() {

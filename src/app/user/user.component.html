@@ -18,7 +18,9 @@
                     <!-- User's Role, if any -->
                     <div class="user-role" [style.color]="(user | async)?.getColor() | async">
                         <div [appColor]="themingService.bg.darken(.1)" [isBackground]="true">
-                            <span>{{ ((user | async)?.getRole() | async)?.getName() | async }}</span>
+                            <span [class.editable]="canChangeRole() | async" (click)="changeRole()">
+                                {{ ((user | async)?.getRole() | async)?.getName() | async }}
+                            </span>
                         </div>
                     </div>
                 </div>

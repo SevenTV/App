@@ -51,6 +51,10 @@
                         display: flex;
                         font-size: .65rem;
                         padding: .75em;
+
+                        &.editable {
+                            cursor: pointer;
+                        }
                     }
 
                     div {

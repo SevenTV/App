@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { asyncScheduler, BehaviorSubject, Observable, of, scheduled, Subject, throwError } from 'rxjs';
 import { filter, map, mapTo, mergeAll, switchMap, take, takeUntil, tap } from 'rxjs/operators';
@@ -10,6 +11,7 @@ import { LoggerService } from 'src/app/service/logger.service';
 import { RestService } from 'src/app/service/rest.service';
 import { RestV2 } from 'src/app/service/rest/rest-v2.structure';
 import { ThemingService } from 'src/app/service/theming.service';
+import { UserRoleDialogComponent } from 'src/app/user/dialog/user-role-dialog.component';
 import { RoleStructure } from 'src/app/util/role.structure';
 import { UserStructure } from 'src/app/util/user.structure';
 
@@ -35,6 +37,7 @@ export class UserComponent implements OnInit, OnDestroy {
 		private restService: RestService,
 		private dataService: DataService,
 		private cdr: ChangeDetectorRef,
+		private dialog: MatDialog,
 		public clientService: ClientService,
 		public themingService: ThemingService
 	) { }
@@ -53,10 +56,19 @@ export class UserComponent implements OnInit, OnDestroy {
 	canEdit(): Observable<boolean> {
 		return this.user.pipe(
 			filter(user => !!user),
+			take(1),
 			switchMap(user => (this.clientService.hasPermission('MANAGE_USERS')).pipe(
 				map(isMod => ({ isMod, user }))
 			)),
 			map(({ isMod, user }) => isMod || (!!user && user.getSnapshot()?.id === this.clientService.getSnapshot()?.id))
+		);
+	}
+
+	canChangeRole(): Observable<boolean> {
+		return this.user.pipe(
+			filter(user => !!user),
+			take(1),
+			switchMap(user => this.clientService.hasPermission('MANAGE_ROLES'))
 		);
 	}
 
@@ -98,6 +110,21 @@ export class UserComponent implements OnInit, OnDestroy {
 		).subscribe({
 			next: (editors) => this.editors.next(editors)
 		});
+	}
+
+	changeRole(): void {
+		this.canChangeRole().pipe(
+			filter(ok => ok === true),
+			switchMap(() => this.user),
+			map(user => ({
+				dialogRef: this.dialog.open(UserRoleDialogComponent, { data: { user } }),
+				user: user as UserStructure
+			})),
+			switchMap(({ dialogRef, user }) => dialogRef.afterClosed().pipe(
+				filter(value => typeof value === 'string'),
+				switchMap((roleID: string) => user.changeRole(roleID ?? '', ''))
+			))
+		).subscribe();
 	}
 
 	ngOnInit(): void {
