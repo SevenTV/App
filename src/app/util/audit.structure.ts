@@ -99,6 +99,9 @@ export class AuditLogEntry extends Structure<'audit'> {
 			case DataStructure.AuditLog.Entry.Type.USER_CHANNEL_EMOTE_EDIT:
 				value = 'edited channel emote properties';
 				break;
+			case DataStructure.AuditLog.Entry.Type.USER_EDIT:
+				value = 'edited this user';
+				break;
 			default:
 				break;
 		}
