@@ -1,7 +1,9 @@
 import { Injectable, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { DataStructure } from '@typings/typings/DataStructure';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { map, mergeAll, tap } from 'rxjs/operators';
+import { DataService } from 'src/app/service/data.service';
 import { RestService } from 'src/app/service/rest.service';
 
 @Injectable({
@@ -26,7 +28,8 @@ export class AppService {
 
 	constructor(
 		titleService: Title,
-		restService: RestService
+		restService: RestService,
+		private dataService: DataService
 	) {
 		const attrMap = new Map<string, AppService.PageTitleAttribute>();
 		this.pageTitleAttr.pipe(
@@ -43,12 +46,13 @@ export class AppService {
 			})
 		).subscribe();
 
-		restService.v2.gql.query<{ meta: { featured_broadcast: string; announcement: string;  }; }>({
+		restService.v2.gql.query<{ meta: { featured_broadcast: string; announcement: string; roles: string[]; }; }>({
 			query: `
 				query GetMeta() {
 					meta() {
 						announcement,
-						featured_broadcast
+						featured_broadcast,
+						roles
 					}
 				}
 			`
@@ -56,9 +60,23 @@ export class AppService {
 			map(res => res?.body?.data.meta)
 		).subscribe({
 			next: (res) => {
-				console.log(res);
 				this.featuredBroadcast.next(res?.featured_broadcast ?? '');
 				this.announcement.next(res?.announcement ?? '');
+
+				// Add roles to data service
+				if (Array.isArray(res?.roles)) {
+					for (const s of res?.roles as string[]) {
+						let role: DataStructure.Role;
+						try {
+							role = JSON.parse(s);
+						} catch (err) {
+							console.error('could not parse application roles,', err);
+							continue;
+						}
+
+						this.dataService.add('role', role);
+					}
+				}
 			}
 		});
 	}
