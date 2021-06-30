@@ -30,13 +30,15 @@ export class RoleStructure {
 
 	getColor(): Observable<number> {
 		return this.data.pipe(
+			take(1),
 			map(d => d?.color ?? 0)
 		);
 	}
 
 	getHexColor(): Observable<string> {
 		return this.getColor().pipe(
-			map(c =>  c === 0 ? '' : `#${c.toString(16)}`)
+			take(1),
+			map(c => `#${c.toString(16)}`)
 		);
 	}
 

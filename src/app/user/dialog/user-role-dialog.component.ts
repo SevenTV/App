@@ -3,7 +3,9 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { ClientService } from 'src/app/service/client.service';
 import { DataService } from 'src/app/service/data.service';
 import { RoleStructure } from 'src/app/util/role.structure';
 import { UserStructure } from 'src/app/util/user.structure';
@@ -17,7 +19,7 @@ import { UserStructure } from 'src/app/util/user.structure';
 			<mat-form-field appearance="outline">
 				<mat-label> Role </mat-label>
 				<mat-select formControlName="role">
-					<mat-option *ngFor="let role of roles | async" [value]="role" [class.d-none]="(role.getName() | async) == ''">
+					<mat-option *ngFor="let role of roles | async" [value]="role" [class.d-none]="(editable(role) | async) === false || (role.getName() | async) == ''">
 						<span [style.color]="role.getHexColor() | async"> {{ (role.getName() | async) || 'No Role' }} </span>
 					</mat-option>
 				</mat-select>
@@ -50,9 +52,16 @@ export class UserRoleDialogComponent implements OnInit, OnDestroy {
 
 	constructor(
 		private dataService: DataService,
+		private clientService: ClientService,
 		public dialogRef: MatDialogRef<UserRoleDialogComponent, UserRoleDialogComponent.Data>,
 		@Inject(MAT_DIALOG_DATA) public data: UserRoleDialogComponent.Data
 	) { }
+
+	editable(role: RoleStructure): Observable<boolean> {
+		return this.clientService.getRole().pipe(
+			map(clientRole => clientRole.getPosition() > role.getPosition())
+		);
+	}
 
 	ngOnInit(): void {
 		const roles = this.dataService.getAll('role').sort((a, b) => b.getPosition() - a.getPosition());
