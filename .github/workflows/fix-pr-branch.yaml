@@ -2,7 +2,7 @@ name: Fix Base Branch
 
 on:
   pull_request:
-    types: [synchronize, edited]
+    types: [opened, synchronize, edited, ready_for_review]
     branches:
       - master
       - stage
