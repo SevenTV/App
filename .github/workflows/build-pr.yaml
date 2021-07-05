@@ -1,11 +1,11 @@
-name: Build PR
+name: Compile App (PR)
 
 on:
   pull_request:
 
 jobs:
   pack:
-    name: Pack Project
+    name: Compile
     runs-on: ubuntu-latest
 
     steps:
