@@ -9,11 +9,13 @@ import { UserHomeComponent } from 'src/app/user/user-home/user-home.component';
 import { EmotesModule } from 'src/app/emotes/emotes.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AdminModule } from 'src/app/admin/admin.module';
+import { UserRoleDialogComponent } from 'src/app/user/dialog/user-role-dialog.component';
 
 @NgModule({
 	declarations: [
 		UserComponent,
-		UserHomeComponent
+		UserHomeComponent,
+		UserRoleDialogComponent
 	],
 	imports: [
 		CommonModule,
@@ -23,6 +25,9 @@ import { AdminModule } from 'src/app/admin/admin.module';
 		MaterialModule,
 		UtilModule,
 		AdminModule
+	],
+	exports: [
+		UserRoleDialogComponent
 	]
 })
 export class UserModule { }

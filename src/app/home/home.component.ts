@@ -1,4 +1,4 @@
-import { animate, style, transition, trigger } from '@angular/animations';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -28,6 +28,14 @@ import { UserStructure } from 'src/app/util/user.structure';
 				style({ transform: 'scale(1)' }),
 				animate('100ms', style({ transform: 'scale(0)' }))
 			])
+		]),
+
+		trigger('variantsPanel', [
+			state('opened', style({ transform: 'translateY(0)' })),
+			state('closed', style({ transform: 'translateY(200vh)' })),
+
+			transition('* => opened', animate('300ms')),
+			transition('* => closed', animate('300ms'))
 		])
 	]
 })
@@ -38,7 +46,10 @@ export class HomeComponent implements OnInit {
 			icon: 'chrome',
 			tooltip: 'Get Extension for Chrome & other browsers',
 			svgIcon: true,
-			click: () => window.open('https://chrome.google.com/webstore/detail/7tv/ammjkodgmmoknidbanneddgankgfejfh', '_blank'),
+			click: () => {
+				this.viewOtherPlatforms.next(false);
+				window.open('https://chrome.google.com/webstore/detail/7tv/ammjkodgmmoknidbanneddgankgfejfh', '_blank');
+			},
 			tag: {
 				label: '???',
 				color: this.themingService.primary.darken(.2).opaquer(1).hex()
@@ -49,7 +60,10 @@ export class HomeComponent implements OnInit {
 			icon: 'firefox',
 			tooltip: 'Get Add-On for Firefox',
 			svgIcon: true,
-			click: () => window.open('https://addons.mozilla.org/en-US/firefox/addon/7tv/', '_blank'),
+			click: () => {
+				this.viewOtherPlatforms.next(false);
+				window.open('https://addons.mozilla.org/en-US/firefox/addon/7tv/', '_blank');
+			},
 			tag: {
 				label: '???',
 				color: this.themingService.primary.darken(.2).opaquer(1).hex()
@@ -60,29 +74,38 @@ export class HomeComponent implements OnInit {
 			icon: 'chatterino',
 			tooltip: 'Download Chatterino7 (Desktop Chat App)',
 			svgIcon: true,
-			click: () => this.openChatterinoDownloadsMenu(),
+			click: () => {
+				this.viewOtherPlatforms.next(false);
+				this.openChatterinoDownloadsMenu();
+			},
 			tag: {
 				label: '???',
 				color: this.themingService.primary.darken(.2).opaquer(1).hex()
 			}
 		},
 		{
-			id: 'phoneapps',
+			id: 'mobile',
 			icon: 'smartphone',
 			tooltip: 'Get 7TV-supported mobile apps',
-			disabled: true,
 			svgIcon: false,
+			click: () => {
+				this.viewOtherPlatforms.next(true);
+				this.platformVariants.next(this.browserIcons[3].variants ?? []);
+			},
 			tag: {
 				label: 'MOBILE',
 				color: this.themingService.accent.darken(.75)
 			}
 		},
 		{
-			id: '3p',
+			id: 'tools',
 			icon: 'code',
 			tooltip: 'Stream tools, addons, bots & more by other developers',
-			disabled: true,
 			svgIcon: false,
+			click: () => {
+				this.viewOtherPlatforms.next(true);
+				this.platformVariants.next(this.browserIcons[4].variants ?? []);
+			},
 			tag: {
 				label: 'MORE'
 			}
@@ -112,6 +135,9 @@ export class HomeComponent implements OnInit {
 	discordWidget = new BehaviorSubject<RestService.Result.GetDiscordWidget | null>(null);
 
 	featuredUser = new BehaviorSubject<UserStructure | null>(null);
+
+	viewOtherPlatforms = new BehaviorSubject(false);
+	platformVariants = new BehaviorSubject<HomeComponent.PlatformVariant[]>([]);
 
 	constructor(
 		private restService: RestService,
@@ -144,6 +170,10 @@ export class HomeComponent implements OnInit {
 		}, 200);
 	}
 
+	openThirdPartyAppLink(platform: HomeComponent.Platform, v: HomeComponent.PlatformVariant): void {
+		window.open(`${this.restService.BASE.v2}/platforms/${platform.id}/${v.id}`, '_blank');
+	}
+
 	ngOnInit(): void {
 		// Get Discord Widget
 		this.restService.Discord.Widget().pipe(
@@ -154,9 +184,9 @@ export class HomeComponent implements OnInit {
 		});
 
 		// Get extension versions
-		this.restService.createRequest<HomeComponent.WebExtPlatform[]>('get', '/webext').pipe(
+		this.restService.createRequest<HomeComponent.Platform[]>('get', '/webext').pipe(
 			RestService.onlyResponse(),
-			map(res => res.body as HomeComponent.WebExtPlatform[]),
+			map(res => res.body as HomeComponent.Platform[]),
 			mergeAll(),
 			map(p => ({
 				icon: this.browserIcons.filter(v => v.id === p.id)[0],
@@ -170,6 +200,11 @@ export class HomeComponent implements OnInit {
 
 				icon.tag.new = platform.new;
 				icon.tag.label = platform.version_tag;
+				icon.variants = platform.variants?.map(v => {
+					v.platform = platform;
+
+					return v;
+				});
 			})
 		).subscribe({
 			complete: () => this.cdr.markForCheck()
@@ -215,12 +250,24 @@ export namespace HomeComponent {
 			color?: string;
 			new?: boolean;
 		};
+		variants?: PlatformVariant[] | null;
 	}
 
-	export interface WebExtPlatform {
+	export interface Platform {
 		id: string;
 		version_tag: string;
 		new: boolean;
+		variants: PlatformVariant[] | null;
+	}
+	export interface PlatformVariant {
+		id: string;
+		name: string;
+		author: string;
+		description: string;
+		version: string;
+		url: string;
+
+		platform: Platform;
 	}
 
 	export interface FooterOptions {

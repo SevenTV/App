@@ -6,7 +6,7 @@ import { LocalStorageService } from 'src/app/service/localstorage.service';
 import { BitField } from '@typings/src/BitField';
 import { DataStructure } from '@typings/typings/DataStructure';
 import { defer, EMPTY, iif, of } from 'rxjs';
-import { switchMap, map, tap, filter, take } from 'rxjs/operators';
+import { switchMap, map, tap, filter, take, delay } from 'rxjs/operators';
 import { EmoteDeleteDialogComponent } from 'src/app/emotes/emote/delete-emote-dialog.component';
 import { EmoteOwnershipDialogComponent } from 'src/app/emotes/emote/transfer-emote-dialog.component';
 import { ClientService } from 'src/app/service/client.service';
@@ -20,6 +20,8 @@ import { UserStructure } from 'src/app/util/user.structure';
 import { ContextMenuComponent } from 'src/app/util/ctx-menu/ctx-menu.component';
 import { EmoteStructure } from 'src/app/util/emote.structure';
 import { EmoteRenameDialogComponent } from 'src/app/emotes/emote/rename-emote-dialog.component';
+import Color from 'color';
+import { EmoteMergeDialogComponent } from 'src/app/emotes/emote/merge-emote-dialog.component';
 @Injectable({providedIn: 'root'})
 export class EmoteListService {
 	currentPage = Number(this.localStorage.getItem('el_pagination_page')) ?? 0;
@@ -136,6 +138,25 @@ export class EmoteListService {
 						switchMap(user => user.getID().pipe(take(1)))
 					)),
 					switchMap(newOwnerID => emote?.edit({ owner_id: newOwnerID as string }, '', ['name', 'owner { id, display_name, login, profile_image_url }']) ?? EMPTY)
+				);
+			}
+		},
+		{
+			label: 'Merge', color: new Color('#ff36d3'),
+			icon: 'call_merge',
+			condition: _ => this.clientService.hasPermission('EDIT_EMOTE_ALL'),
+			click: currentEmote => {
+				const dialogRef = this.dialog.open(EmoteMergeDialogComponent, {
+					data: { emote: currentEmote },
+					maxWidth: '36em'
+				});
+
+				return dialogRef.afterClosed().pipe(
+					filter(({ id, reason }) => typeof id === 'string' && id.length === 24),
+					switchMap(({ id, reason }) => this.restService.v2.MergeEmote(currentEmote.getID(), id, reason)),
+					tap(() => this.router.navigate(['/'])),
+					delay(1),
+					tap(({ emote }) => this.router.navigate(['/emotes', emote.id]))
 				);
 			}
 		},

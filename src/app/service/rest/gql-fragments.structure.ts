@@ -64,7 +64,8 @@ export namespace GQLFragments {
 		includeOwnedEmotes = false,
 		includeEditors = false,
 		includeEditorIn = false,
-		includeAuditEntries = false
+		includeAuditEntries = false,
+		includeStreamData = false
 	) => `
 		fragment FullUser on User {
 			id,  email, display_name, login,
@@ -94,6 +95,17 @@ export namespace GQLFragments {
 			}
 			${includeEditorIn
 				? `editor_in { ${ShorthandPartialUser()} },`
+				: ''
+			}
+			${includeStreamData
+				? `
+					follower_count,
+					broadcast {
+						type,
+						title,
+						game_name,
+						viewer_count,
+					},`
 				: ''
 			}
 			twitch_id,

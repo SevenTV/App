@@ -26,6 +26,48 @@
 				<span>Downloads</span>
 			</p>
 			<span class="d-flex flex-row flex-wrap justify-content-center browser-downloads">
+				<!-- Platform Variants Overlay -->
+				<div [@variantsPanel]="(viewOtherPlatforms | async) ? 'opened' : 'closed'"
+					class="platform-variants"
+					[appColor]="themingService.bg.darken(.45).opaquer(-.235)" [isBackground]="true"
+				>
+					<!-- The third party platform cardss -->
+					<div class="inner-container">
+						<div class="close-panel">
+							<button color="warn" mat-icon-button (click)="viewOtherPlatforms.next(false)">
+								<mat-icon>close</mat-icon>
+							</button>
+						</div>
+
+						<!-- Generate cards -->
+						<div class="variant-cards mat-elevation-z1">
+							<div
+								class="variant-card"
+								matRipple
+								matRippleColor="rgb(0, 0, 0, 0.5)"
+								appColor="white"
+								[isBackground]="true"
+								*ngFor="let v of platformVariants | async"
+
+								(click)="openThirdPartyAppLink(v.platform, v)"
+							>
+								<div class="platform-title">
+									{{ v.name }}
+								</div>
+
+								<div class="platform-author" *ngIf="!!v.author">
+									by {{ v.author }}
+								</div>
+
+								<div class="platform-description" *ngIf="!!v.description">
+									{{ v.description }}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Render Platform Icons -->
 				<div *ngFor="let icon of browserIcons">
 					<div class="browser-icon my-2">	
 						<div class="tag" [class.new]="icon.tag?.new" [appColor]="icon.tag?.color" [isBackground]="icon.tag?.new || true">
@@ -45,7 +87,7 @@
 							<mat-icon *ngSwitchCase="true" [style.transform]="'scale(2)'" [svgIcon]="(themingService.getSvgIcon(icon.icon) | async) || ''" (click)="icon.click ? icon.click($event) : null">
 			
 							</mat-icon>
-							<mat-icon *ngSwitchCase="false" [style.transform]="'scale(2)'">
+							<mat-icon *ngSwitchCase="false" [style.transform]="'scale(2)'" (click)="icon.click ? icon.click($event) : null">
 								{{icon.icon}}
 							</mat-icon>
 						</div>

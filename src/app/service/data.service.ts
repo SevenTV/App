@@ -56,6 +56,23 @@ export class DataService {
 		return structs;
 	}
 
+	getAll<T extends DataService.StructureType>(type: T, limit?: number): DataService.Structure<T>[] {
+		const store = this.store[type];
+		const structs = [] as DataService.Structure<T>[];
+
+		let index = 0;
+		for (const [_, struct] of store) {
+			if (typeof limit === 'number' && index > limit) {
+				break;
+			}
+
+			structs.push(struct as DataService.Structure<T>);
+			index++;
+		}
+
+		return structs;
+	}
+
 	/**
 	 * Create a new Structure from given data
 	 *

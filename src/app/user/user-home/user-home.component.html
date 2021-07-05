@@ -1,4 +1,24 @@
 <div class="user-home">
+	<!-- Heading -->
+	<div class="user-heading mat-elevation-z2" [appColor]="themingService.bg.darken(.1)" [isBackground]="true">
+		<div class="live-indicators">
+			<div class="view-count inline-indicator" *ngIf="isLive | async">
+				<mat-icon class="mr-1" color="warn">person_outline</mat-icon>
+				<span class="text-danger"> {{(broadcast | async)?.viewer_count}} viewers </span>
+			</div>
+
+			<div class="is-live inline-indicator" *ngIf="isLive | async">
+				<mat-icon class="mr-1" color="warn">circle</mat-icon>
+				<span class="text-danger"> LIVE </span>
+			</div>
+
+			<div class="follow-count inline-indicator">
+				<mat-icon class="mr-1">groups</mat-icon>
+				<span>{{(user | async)?.getFollowerCount() | async}} followers</span>
+			</div>
+		</div>
+	</div>
+
 	<!-- User's Channel Emotes -->
 	<div class="heading" [appColor]="themingService.primary.darken(.075)" [isBackground]="true">
 		Emotes Enabled ({{(channelCount | async) || 0}}/{{((user | async)?.getEmoteSlots() | async) || 0}})

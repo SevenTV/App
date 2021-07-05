@@ -78,11 +78,6 @@ export class RestService {
 			reportProgress: true
 		} as any;
 
-		// Don't make calls on SSR
-		if (this.platformId === 'server') {
-			return of({} as any);
-		}
-
 		return of(method).pipe(
 			switchMap(m => iif(() => (m === 'get') || (m === 'delete'),
 				this.httpService[m](uri, opt),

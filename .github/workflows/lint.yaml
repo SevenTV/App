@@ -5,11 +5,13 @@ on:
     branches:
       - master
       - dev
+      - stage
 
   pull_request:
     branches:
       - master
       - dev
+      - stage
 
 jobs:
   lint:

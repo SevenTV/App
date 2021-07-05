@@ -1,0 +1,26 @@
+name: Fix Base Branch
+
+on:
+  pull_request:
+    types: [synchronize, edited]
+    branches:
+      - master
+      - stage
+
+jobs:
+  fix:
+    name: Change Pull Request Base Branch
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'allow any branch') }}
+
+    steps:
+      - uses: octokit/request-action@v2.x
+        id: fix_pr_branch
+        with:
+          route: PATCH /repos/{repo}/pulls/{event_id}
+          repo: ${{ github.repository }}
+          event_id: ${{ github.event.number }}
+          base: dev
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

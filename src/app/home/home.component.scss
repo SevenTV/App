@@ -93,6 +93,67 @@
 	}
 }
 
+.platform-variants {
+	display: block;
+	position: fixed;
+	min-height: 16em;
+	bottom: 0;
+	z-index: 2;
+	width: 100%;
+	overflow-x: hidden;
+
+	/*
+	border-top-left-radius: 8em;
+	border-top-right-radius: 8em;
+	*/
+
+	.inner-container {
+		display: flex;
+		flex-grow: 1;
+		align-items: flex-start;
+		flex-direction: column;
+		width: 100%;
+		position: relative;
+
+		.close-panel {
+			display: flex;
+			width: 100%;
+			justify-content: center;
+		}
+
+		.variant-cards {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			margin-top: 2em;
+			margin-left: 3em;
+			margin-right: 3em;
+
+			.variant-card {
+				cursor: pointer;
+				width: 18em;
+				height: 7.5em;
+				color: black;
+				padding: .75em;
+				margin: .5em;
+
+				.platform-title {
+					font-size: 1.3em;
+					font-weight: 500;
+				}
+
+				.platform-author {
+					font-size: 1.15em;
+				}
+
+				.platform-description {
+					font-size: .85em;
+				}
+			}
+		}
+	}
+}
+
 .feature-wrapper {
 	height: 100%;
 	display: flex;

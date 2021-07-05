@@ -1,7 +1,7 @@
 import { BitField } from '@typings/src/BitField';
 import { DataStructure } from '@typings/typings/DataStructure';
 import { from, Observable, of, throwError } from 'rxjs';
-import { defaultIfEmpty, filter, map, mergeAll, pluck, switchMap, take, toArray } from 'rxjs/operators';
+import { defaultIfEmpty, filter, map, mapTo, mergeAll, pluck, switchMap, take, tap, toArray } from 'rxjs/operators';
 import { AppInjector } from 'src/app/service/app.injector';
 import { RestService } from 'src/app/service/rest.service';
 import { Structure } from 'src/app/util/abstract.structure';
@@ -171,7 +171,8 @@ export class UserStructure extends Structure<'user'> {
 		return this.dataOnce().pipe(
 			map(data => data?.editor_in ?? []),
 			mergeAll(),
-			map(u => this.dataService.get('user', u)[0]),
+			map(u => this.dataService.add('user', u)),
+			mergeAll(),
 			toArray()
 		);
 	}
@@ -246,8 +247,52 @@ export class UserStructure extends Structure<'user'> {
 		);
 	}
 
+	isLive(): Observable<boolean> {
+		return this.dataOnce().pipe(
+			map(d => d?.broadcast?.type === 'live')
+		);
+	}
+
+	getBroadcast(): Observable<DataStructure.Broadcast | null> {
+		return this.dataOnce().pipe(
+			map(d => d?.broadcast ?? null)
+		);
+	}
+
+	getFollowerCount(): Observable<number> {
+		return this.dataOnce().pipe(
+			map(d => d?.follower_count ?? 0)
+		);
+	}
+
 	ban(expireAt: Date, reason = ''): Observable<void> {
 		return this.getRestService().v2.BanUser(this.id, expireAt, reason);
+	}
+
+	changeRole(roleID: string, reason?: string): Observable<void> {
+		return this.getRestService().v2.gql.query<{ editUser: DataStructure.TwitchUser }>({
+			query: `
+				mutation EditUser($usr: UserInput!, $reason: String) {
+					editUser(user: $usr, reason: $reason) {
+						id,
+						role {
+							id, name, allowed, denied, color
+						}
+					}
+				}
+			`,
+			variables: {
+				usr: {
+					id: this.id,
+					role_id: roleID
+				},
+				reason
+			},
+			auth: true
+		}).pipe(
+			map(res => this.pushData(res?.body?.data.editUser ?? null)),
+			mapTo(undefined)
+		);
 	}
 
 	getTwitchURL(): string {

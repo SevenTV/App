@@ -8,8 +8,10 @@ updates:
       time: "00:00"
     open-pull-requests-limit: 10
     reviewers:
+      - anatoleam
       - troydota
     assignees:
+      - anatoleam
       - troydota
     commit-message:
       prefix: fix
@@ -23,8 +25,10 @@ updates:
       time: "00:00"
     open-pull-requests-limit: 10
     reviewers:
+      - anatoleam
       - troydota
     assignees:
+      - anatoleam
       - troydota
     commit-message:
       prefix: fix
