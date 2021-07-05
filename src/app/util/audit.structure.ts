@@ -84,6 +84,9 @@ export class AuditLogEntry extends Structure<'audit'> {
 			case DataStructure.AuditLog.Entry.Type.EMOTE_DELETE:
 				value = 'deleted this emote';
 				break;
+			case DataStructure.AuditLog.Entry.Type.EMOTE_MERGE:
+				value = 'merged and deleted this emote';
+				break;
 			case DataStructure.AuditLog.Entry.Type.USER_CHANNEL_EMOTE_ADD:
 				value = `enabled an emote`;
 				break;
@@ -153,7 +156,7 @@ export class AuditLogEntry extends Structure<'audit'> {
 		if (!this.restService) {
 			try {
 				this.restService = AppInjector.get(RestService);
-			} catch (_) {}
+			} catch (_) { }
 		}
 
 		return this.restService as any;

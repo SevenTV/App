@@ -20,6 +20,7 @@ import { UtilModule } from 'src/app/util/util.module';
 import { EmoteWarningDialogComponent } from 'src/app/emotes/emote/warning-dialog.component';
 import { TOSDialogComponent } from 'src/app/emotes/emote-create/tos-dialog/tos-dialog.component';
 import { AdminModule } from 'src/app/admin/admin.module';
+import { EmoteMergeDialogComponent } from 'src/app/emotes/emote/merge-emote-dialog.component';
 
 @NgModule({
 	imports: [
@@ -43,6 +44,7 @@ import { AdminModule } from 'src/app/admin/admin.module';
 		EmoteRenameDialogComponent,
 		EmoteOverridesDialogComponent,
 		EmoteOwnershipDialogComponent,
+		EmoteMergeDialogComponent,
 		EmoteDeleteDialogComponent,
 		EmoteWarningDialogComponent,
 		TagSystemComponent,

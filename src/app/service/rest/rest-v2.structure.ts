@@ -305,6 +305,30 @@ export class RestV2 {
 		);
 	}
 
+	MergeEmote(oldEmoteID: string, newEmoteID: string, reason: string): Observable<{ emote: DataStructure.Emote; }> {
+		return this.gql.query<{ mergeEmote: DataStructure.Emote; }>({
+			query: `
+				mutation MergeEmote($old: String!, $new: String!, $reason: String!) {
+					mergeEmote(old_id: $old, new_id: $new, reason: $reason) {
+						...FullEmote
+					}
+				}
+
+				${GQLFragments.FullEmote()}
+			`,
+			variables: {
+				old: oldEmoteID,
+				new: newEmoteID,
+				reason
+			},
+			auth: true
+		}).pipe(
+			map(res => ({
+				emote: res?.body?.data.mergeEmote as DataStructure.Emote
+			}))
+		);
+	}
+
 	BanUser(victimID: string, expireAt: Date, reason = ''): Observable<void> {
 		return this.gql.query<{}>({
 			query: `
