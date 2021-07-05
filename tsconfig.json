@@ -19,7 +19,7 @@
 		"target": "es2015",
 		"module": "es2020",
 		"paths": {
-			"@typings/*": ["../Shared/*", "Typings/*", "node_modules/seventv-typings/*"]
+			"@typings/*": ["../Shared/*", "../Typings/*", "Typings/*"]
 		},
 		"lib": [
 			"es2018",
