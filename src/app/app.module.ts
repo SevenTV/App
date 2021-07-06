@@ -20,6 +20,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { UpdateDialogComponent } from 'src/app/update-dialog.component.';
 import { MarkdownModule } from 'ngx-markdown';
 import { ChangelogDialogComponent } from 'src/app/util/dialog/changelog/changelog-dialog.component';
+import { NotificationModule } from 'src/app/notifications/notifications.module';
 import { NotifyButtonComponent } from 'src/app/notifications/notify-button.component';
 
 @NgModule({
@@ -41,6 +42,7 @@ import { NotifyButtonComponent } from 'src/app/notifications/notify-button.compo
 		UtilModule,
 		NgbModule,
 		MatSnackBarModule,
+		NotificationModule,
 		MarkdownModule.forRoot(),
 		ServiceWorkerModule.register('ngsw-worker.js', {
 			enabled: environment.serviceWorker,

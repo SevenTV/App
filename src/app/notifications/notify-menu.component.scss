@@ -1,0 +1,26 @@
+:first-child {
+	color: white;
+	min-width: 24em;
+
+	.overlay-content {
+		margin-top: 64px;
+		margin-right: 48px;
+		padding: 1em;
+		border-radius: 8px;
+
+		.menu-heading {
+			display: flex;
+			justify-content: space-between;
+
+			.close-button {
+				cursor: pointer;
+				width: 24px;
+				height: 24px;
+			}
+		}
+
+		.notify-list {
+			margin-top: 1em;
+		}
+	}
+}

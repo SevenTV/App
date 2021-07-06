@@ -63,8 +63,7 @@
 			</button>
 		</div>
 
-		<app-notify-button matTooltip="Notifications"></app-notify-button>
-
+		<app-notify-button (click)="openNotifyMenu()" matTooltip="Notifications"></app-notify-button>
 
 		<div class="d-flex mr-2" *ngIf="clientService.isAnEditor() | async" [ngSwitch]="clientService.isImpersonating">
 			<button mat-icon-button matTooltip="Swap Editor Channel" (click)="impersonate()" *ngSwitchCase="false">

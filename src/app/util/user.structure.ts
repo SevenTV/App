@@ -7,6 +7,7 @@ import { RestService } from 'src/app/service/rest.service';
 import { Structure } from 'src/app/util/abstract.structure';
 import { AuditLogEntry } from 'src/app/util/audit.structure';
 import { EmoteStructure } from 'src/app/util/emote.structure';
+import { Notification } from 'src/app/util/notification.structure';
 import { RoleStructure } from 'src/app/util/role.structure';
 
 export class UserStructure extends Structure<'user'> {
@@ -265,6 +266,13 @@ export class UserStructure extends Structure<'user'> {
 
 	ban(expireAt: Date, reason = ''): Observable<void> {
 		return this.getRestService().v2.BanUser(this.id, expireAt, reason);
+	}
+
+	getNotifications(): Observable<Notification[]> {
+		return this.dataOnce().pipe(
+			map(d => d?.notifications ?? []),
+			map(a => this.dataService.add('notification', ...a))
+		);
 	}
 
 	getNotificationCount(): Observable<number> {

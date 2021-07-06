@@ -53,3 +53,10 @@ mat-icon {
 
 // Fix outline issue with bootstrap and angular material
 :focus {outline:0 !important;}
+
+.overlay-content-top-right {
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+}

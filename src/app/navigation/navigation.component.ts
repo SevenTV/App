@@ -1,9 +1,12 @@
+import { Overlay } from '@angular/cdk/overlay';
+import { ComponentPortal } from '@angular/cdk/portal';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, of } from 'rxjs';
 import { delay, filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { AppComponent } from 'src/app/app.component';
 import { EditorDialogComponent } from 'src/app/navigation/editor-dialog.component';
+import { NotifyMenuComponent } from 'src/app/notifications/notify-menu.component';
 import { AppService } from 'src/app/service/app.service';
 import { ClientService } from 'src/app/service/client.service';
 import { ThemingService } from 'src/app/service/theming.service';
@@ -67,6 +70,7 @@ export class NavigationComponent implements OnInit {
 		private cdr: ChangeDetectorRef,
 		private dialog: MatDialog,
 		private windowRef: WindowRef,
+		private overlay: Overlay,
 		public clientService: ClientService,
 		public viewportService: ViewportService,
 		public themingService: ThemingService,
@@ -87,6 +91,25 @@ export class NavigationComponent implements OnInit {
 	openChangelog(): void {
 		this.dialog.open(ChangelogDialogComponent, {
 			maxWidth: '64em'
+		});
+	}
+
+	openNotifyMenu(): void {
+		const overlayRef = this.overlay.create({
+			panelClass: 'overlay-content-top-right',
+			hasBackdrop: false
+		});
+
+		const portal = new ComponentPortal(NotifyMenuComponent);
+		const component = overlayRef.attach(portal);
+
+		component.instance.closed.pipe(
+			take(1)
+		).subscribe({
+			next(): void {
+				overlayRef.detach();
+				overlayRef.dispose();
+			}
 		});
 	}
 

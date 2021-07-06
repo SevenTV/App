@@ -1,0 +1,19 @@
+<div>
+	<div class="overlay-content mat-elevation-z4" [appColor]="themingService.bg.opaquer(-.25).darken(.3)" [isBackground]="true">
+		<div class="menu-heading">
+			<h3>Notifications</h3>
+
+			<div class="close-button" (click)="close()" matRipple [matRippleRadius]="16" [matRippleCentered]="true" [matRippleUnbounded]="true">
+				<mat-icon>close</mat-icon>
+			</div>
+		</div>
+		<mat-divider appColor="currentColor" [isBackground]="true"></mat-divider>
+
+		<div class="notify-list">
+			<div *ngFor="let n of notifications | async">
+				{{n.id}}
+			</div>
+		</div>
+	</div>
+
+</div>
