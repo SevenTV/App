@@ -1,7 +1,7 @@
 import { DataStructure } from '@typings/typings/DataStructure';
 import { Structure } from 'src/app/util/abstract.structure';
 
-export class Notification extends Structure<'notification'> {
+export class NotificationStructure extends Structure<'notification'> {
 	id = '';
 
 	pushData(data: DataStructure.Notification): this {
@@ -29,4 +29,8 @@ export class Notification extends Structure<'notification'> {
 	getSnapshot(): any {
 		return undefined;
 	}
+}
+
+export namespace NotificationStructure {
+
 }
