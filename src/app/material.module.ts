@@ -20,6 +20,7 @@ import { ColorDirective } from 'src/app/directive/color.directive';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSelectModule } from '@angular/material/select';
+import { MatBadgeModule } from '@angular/material/badge';
 
 const modules = [
 	MatToolbarModule,
@@ -40,7 +41,8 @@ const modules = [
 	MatDatepickerModule,
 	MatNativeDateModule,
 	MatExpansionModule,
-	MatSelectModule
+	MatSelectModule,
+	MatBadgeModule
 ];
 
 @NgModule({
