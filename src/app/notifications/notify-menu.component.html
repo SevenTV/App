@@ -1,5 +1,6 @@
 <div>
-	<div class="overlay-content mat-elevation-z4" [appColor]="themingService.bg.opaquer(-.25).darken(.3)" [isBackground]="true">
+	<div #menuBox class="overlay-content mat-elevation-z4" [appColor]="themingService.bg.opaquer(-.25).darken(.3)" [isBackground]="true">
+		<!-- Heading text / close button -->
 		<div class="menu-heading">
 			<h3>Notifications</h3>
 
@@ -9,6 +10,7 @@
 		</div>
 		<mat-divider appColor="currentColor" [isBackground]="true"></mat-divider>
 
+		<!-- Render the list of notifications -->
 		<div class="notify-list">
 			<div *ngFor="let n of notifications | async">
 				{{n.id}}

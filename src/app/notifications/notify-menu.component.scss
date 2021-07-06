@@ -21,6 +21,8 @@
 
 		.notify-list {
 			margin-top: 1em;
+			max-height: 22.5em;
+			overflow: auto;
 		}
 	}
 }

@@ -1,9 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { delay, tap } from 'rxjs/operators';
 import { ClientService } from 'src/app/service/client.service';
 import { ThemingService } from 'src/app/service/theming.service';
-import { Notification } from 'src/app/util/notification.structure';
+import { NotificationStructure } from 'src/app/util/notification.structure';
 
 @Component({
 	selector: 'app-notify-menu',
@@ -13,21 +13,43 @@ import { Notification } from 'src/app/util/notification.structure';
 
 export class NotifyMenuComponent implements OnInit, OnDestroy {
 	closed = new Subject<void>();
-	notifications = new BehaviorSubject<Notification[]>([]);
+	notifications = new BehaviorSubject<NotificationStructure[]>([]);
+
+	loaded = false;
 
 	constructor(
 		public themingService: ThemingService,
+		private el: ElementRef<HTMLDivElement>,
 		private clientService: ClientService
 	) { }
 
+	// Handle outside click: close the menu
+	@HostListener('document:click', ['$event'])
+	onOutsideClick(ev: MouseEvent): void {
+		if (!this.loaded) {
+			return;
+		}
+		if (this.el.nativeElement.contains(ev.target as Node)) {
+			return;
+		}
+
+		this.close();
+	}
+
+	/**
+	 * Close this menu
+	 */
 	close(): void {
 		this.closed.next(undefined);
 	}
 
 	ngOnInit(): void {
 		this.clientService.getNotifications().pipe(
-			tap(x => this.notifications.next(x))
-		).subscribe();
+			tap(x => this.notifications.next(x)),
+			delay(0)
+		).subscribe({
+			complete: () => this.loaded = true
+		});
 	}
 
 	ngOnDestroy(): void {
