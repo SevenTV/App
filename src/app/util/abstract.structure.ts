@@ -9,6 +9,7 @@ export abstract class Structure<T extends DataService.StructureType> {
 	constructor(protected dataService: DataService) {}
 
 	abstract pushData(data: DataService.StructureData<T>): DataService.Structure<T>;
+	abstract getSnapshot(): DataService.StructureData<T> | null;
 }
 
 export namespace Structure {

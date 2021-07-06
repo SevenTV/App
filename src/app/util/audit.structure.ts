@@ -149,7 +149,7 @@ export class AuditLogEntry extends Structure<'audit'> {
 	}
 
 	getSnapshot(): DataStructure.AuditLog.Entry {
-		return {} as any;
+		return {} as DataStructure.AuditLog.Entry;
 	}
 
 	getRestService(): RestService {

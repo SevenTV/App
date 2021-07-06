@@ -5,6 +5,7 @@ import { DataStructure } from '@typings/typings/DataStructure';
 import { Structure as AbstractStructure } from 'src/app/util/abstract.structure';
 import { AuditLogEntry } from 'src/app/util/audit.structure';
 import { EmoteStructure } from 'src/app/util/emote.structure';
+import { Notification } from 'src/app/util/notification.structure';
 import { RoleStructure } from 'src/app/util/role.structure';
 import { UserStructure } from 'src/app/util/user.structure';
 
@@ -14,8 +15,9 @@ export class DataService {
 		user: new Map<string, UserStructure>(),
 		emote: new Map<string, EmoteStructure>(),
 		role: new Map<string, RoleStructure>(),
-		audit: new Map<string, AuditLogEntry>()
-	} as { [key in DataService.StructureType]: Map<string, UserStructure | EmoteStructure | RoleStructure | AuditLogEntry> };
+		audit: new Map<string, AuditLogEntry>(),
+		notification: new Map<string, Notification>()
+	} as { [key in DataService.StructureType]: Map<string, UserStructure | EmoteStructure | RoleStructure | AuditLogEntry | Notification> };
 
 	constructor() { }
 
@@ -105,13 +107,14 @@ export class DataService {
 }
 
 export namespace DataService {
-	export type StructureType = 'user' | 'emote' | 'role' | 'audit';
+	export type StructureType = 'user' | 'emote' | 'role' | 'audit' | 'notification';
 
 	export type Structure<T extends StructureType> = {
 		user: UserStructure;
 		emote: EmoteStructure;
 		role: RoleStructure;
 		audit: AuditLogEntry;
+		notification: Notification;
 	}[T];
 
 	export type StructureData<T extends StructureType> = {
@@ -119,12 +122,14 @@ export namespace DataService {
 		emote: DataStructure.Emote;
 		role: DataStructure.Role;
 		audit: DataStructure.AuditLog.Entry;
+		notification: DataStructure.Notification;
 	}[T];
 
 	export const StructureClass = {
 		user: UserStructure,
 		emote: EmoteStructure,
 		role: RoleStructure,
-		audit: AuditLogEntry
+		audit: AuditLogEntry,
+		notification: Notification
 	};
 }

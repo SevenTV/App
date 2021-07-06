@@ -37,7 +37,7 @@ export class RestService {
 			of(token).pipe(
 				filter(x => typeof x === 'string'),
 				tap(tok => clientService.setToken(tok)),
-				switchMap(() => this.v2.GetUser('@me', { includeEditorIn: true })),
+				switchMap(() => this.v2.GetUser('@me', { includeEditorIn: true }, ['notification_count'])),
 				switchMap(res => !!res.user?.id ? of(res.user) : throwError('Unknown Account')),
 				tap(user => clientService.pushData(user))
 			).subscribe({

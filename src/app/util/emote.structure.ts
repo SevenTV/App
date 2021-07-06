@@ -320,7 +320,7 @@ export class EmoteStructure extends Structure<'emote'> {
 		return this.getSnapshot()?.height ?? [0, 0, 0, 0];
 	}
 
-	getSnapshot(): DataStructure.Emote | null | undefined {
+	getSnapshot(): DataStructure.Emote | null {
 		return this.data.getValue();
 	}
 

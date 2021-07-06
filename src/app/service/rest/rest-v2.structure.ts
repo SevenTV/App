@@ -13,12 +13,15 @@ export class RestV2 {
 
 	}
 
-	GetUser(id: string, opt?: Partial<RestV2.GetUserOptions>): Observable<{ user: DataStructure.TwitchUser }> {
+	GetUser(id: string, opt?: Partial<RestV2.GetUserOptions>, extraFields?: string[]): Observable<{ user: DataStructure.TwitchUser }> {
 		return this.gql.query<{ user: DataStructure.TwitchUser }>({
 			query: `
 				query GetUser($id: String!) {
 					user(id: $id) {
-						...FullUser
+						...FullUser,
+						${Array.isArray(extraFields) && extraFields.length > 0
+							? ', ' + extraFields.join(', ')
+							: ''}
 					}
 				}
 

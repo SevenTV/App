@@ -14,8 +14,6 @@ export class UserStructure extends Structure<'user'> {
 	id = '';
 	restService: RestService | null = null;
 
-	private auditEntries = [] as AuditLogEntry[];
-
 	/**
 	 * Push data onto this user.
 	 *
@@ -212,8 +210,8 @@ export class UserStructure extends Structure<'user'> {
 		);
 	}
 
-	getSnapshot(): Partial<DataStructure.TwitchUser> | null {
-		return this.snapshot;
+	getSnapshot(): DataStructure.TwitchUser | null {
+		return this.snapshot as DataStructure.TwitchUser;
 	}
 
 	// tslint:disable-next-line:typedef
@@ -267,6 +265,12 @@ export class UserStructure extends Structure<'user'> {
 
 	ban(expireAt: Date, reason = ''): Observable<void> {
 		return this.getRestService().v2.BanUser(this.id, expireAt, reason);
+	}
+
+	getNotificationCount(): Observable<number> {
+		return this.dataOnce().pipe(
+			map(d => d?.notification_count ?? 0)
+		);
 	}
 
 	changeRole(roleID: string, reason?: string): Observable<void> {
