@@ -95,6 +95,8 @@
 
 	.edited-user {
 		display: flex;
+		position: relative;
+		top: -16px;
 		flex-direction: row;
 		align-items: center;
 		margin-left: .4em;
