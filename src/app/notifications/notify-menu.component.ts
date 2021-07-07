@@ -1,7 +1,10 @@
 import { Component, ElementRef, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { DataStructure } from '@typings/typings/DataStructure';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { delay, tap } from 'rxjs/operators';
+import { delay, map, tap } from 'rxjs/operators';
 import { ClientService } from 'src/app/service/client.service';
+import { DataService } from 'src/app/service/data.service';
+import { RestService } from 'src/app/service/rest.service';
 import { ThemingService } from 'src/app/service/theming.service';
 import { NotificationStructure } from 'src/app/util/notification.structure';
 
@@ -20,6 +23,8 @@ export class NotifyMenuComponent implements OnInit, OnDestroy {
 	constructor(
 		public themingService: ThemingService,
 		private el: ElementRef<HTMLDivElement>,
+		private dataService: DataService,
+		private restService: RestService,
 		private clientService: ClientService
 	) { }
 
@@ -44,7 +49,34 @@ export class NotifyMenuComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit(): void {
-		this.clientService.getNotifications().pipe(
+		this.restService.v2.gql.query<{ user: DataStructure.TwitchUser; }>({
+			query: `
+				query GetUserNotifications($id: String!) {
+					user(id: $id) {
+						notifications {
+							id, read, title, announcement,
+							users {
+								id, login, display_name,
+								profile_image_url,
+								role { id, color }
+							},
+							emotes {
+								id, name
+							},
+							message_parts {
+								type, data
+							}
+						}
+					}
+				}
+			`,
+			variables: {
+				id: this.clientService.impersonating.getValue()?.id ?? '@me'
+			},
+			auth: true
+		}).pipe(
+			map(res => res?.body?.data.user.notifications ?? []),
+			map(x => this.dataService.add('notification', ...x)),
 			tap(x => this.notifications.next(x)),
 			delay(0)
 		).subscribe({

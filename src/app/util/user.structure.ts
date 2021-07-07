@@ -281,6 +281,24 @@ export class UserStructure extends Structure<'user'> {
 		);
 	}
 
+	fetchNotificationCount(): Observable<number> {
+		return this.getRestService().v2.gql.query<{ user: DataStructure.TwitchUser; }>({
+			query: `
+				query GetUserNotificationCount($id: String!) {
+					user(id: $id) {
+						notification_count
+					}
+				}
+			`,
+			variables: {
+				id: this.id
+			},
+			auth: true
+		}).pipe(
+			map(res => res?.body?.data.user.notification_count ?? 0)
+		);
+	}
+
 	changeRole(roleID: string, reason?: string): Observable<void> {
 		return this.getRestService().v2.gql.query<{ editUser: DataStructure.TwitchUser }>({
 			query: `

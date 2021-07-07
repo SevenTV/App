@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { filter, switchMap, tap } from 'rxjs/operators';
+import { asapScheduler, BehaviorSubject, scheduled, Subject } from 'rxjs';
+import { filter, mapTo, mergeAll, switchMap, tap } from 'rxjs/operators';
 import { ClientService } from 'src/app/service/client.service';
 
 @Component({
@@ -21,9 +21,13 @@ export class NotifyButtonComponent implements OnInit, OnDestroy {
 	) { }
 
 	ngOnInit(): void {
-		this.clientService.isAuthenticated().pipe(
-			filter(ok => ok === true),
-			switchMap(() => this.clientService.getNotificationCount()),
+		scheduled([
+			this.clientService.isAuthenticated().pipe(filter(ok => ok === true)),
+			this.clientService.impersonating.pipe(mapTo(true))
+		], asapScheduler).pipe(
+			mergeAll(),
+			switchMap(() => this.clientService.getActorUser()),
+			switchMap(actor => actor.fetchNotificationCount()),
 			tap(nCount => this.count.next(nCount))
 		).subscribe();
 	}
