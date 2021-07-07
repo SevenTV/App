@@ -42,7 +42,9 @@ export class RestService {
 					`notifications {
 						id, read, title, announcement,
 						users {
-							id, login
+							id, login, display_name,
+							profile_image_url,
+							role { id, color }
 						},
 						emotes {
 							id, name

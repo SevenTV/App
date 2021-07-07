@@ -1,0 +1,26 @@
+<div class="notify-item mat-elevation-z1" [appColor]="themingService.bg.lighten(.2)" [isBackground]="true">
+	<!-- Render notify heading (title, date) -->
+	<div class="notify-heading">
+		<span class="notify-title">
+			{{notification?.getTitle() | async}}
+		</span>
+	</div>
+
+	<!-- Render parts -->
+	<div class="notify-parts">
+		<span class="single-part" *ngFor="let part of parts | async">
+			<span class="is-text" *ngIf="part.isText()">
+				{{part.getText()}}
+			</span>
+
+			<span class="mentions-user" *ngIf="part.isUserMention()">
+				<app-user-name [clickable]="false" [size]="[1, 1]" [user]="part.getUser()"></app-user-name>
+			</span>
+
+			<span class="mentions-emote" *ngIf="part.isEmoteMention()" (click)="goToEmote(part.getEmote())">
+				{{part.getEmote().getName() | async}}
+			</span>
+		</span>
+	</div>
+
+</div>

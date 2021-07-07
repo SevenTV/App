@@ -1,13 +1,18 @@
 .user-name {
-	display: flex;
-	align-items: center;
+	display: inline-flex;
+	align-items: flex-start;
 	box-sizing: border-box;
 	&.clickable { cursor: pointer; }
 
+	.username-container {
+		display: inline-flex;
+		align-self: flex-end;
+	}
+
 	.user-avatar {
-		display: flex;
-		justify-content: center;
-		align-items: center;
+		display: inline-flex;
+		justify-content: flex-start;
+		align-items: flex-end;
 		border-style: solid;
 		border-width: 1px;
 		border-radius: 50%;

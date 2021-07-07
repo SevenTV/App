@@ -13,7 +13,7 @@
 		<!-- Render the list of notifications -->
 		<div class="notify-list">
 			<div *ngFor="let n of notifications | async">
-				{{n.id}}
+				<app-notify-item [notification]="n"></app-notify-item>
 			</div>
 		</div>
 	</div>

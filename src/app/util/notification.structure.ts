@@ -1,4 +1,6 @@
 import { DataStructure } from '@typings/typings/DataStructure';
+import { Observable } from 'rxjs';
+import { map, take } from 'rxjs/operators';
 import { DataService } from 'src/app/service/data.service';
 import { Structure } from 'src/app/util/abstract.structure';
 import { EmoteStructure } from 'src/app/util/emote.structure';
@@ -46,6 +48,13 @@ export class NotificationStructure extends Structure<'notification'> {
 			this.data.next(newData);
 		}
 		return this;
+	}
+
+	getTitle(): Observable<string> {
+		return this.data.pipe(
+			take(1),
+			map(d => d?.title ?? '')
+		);
 	}
 
 	getSnapshot(): any {

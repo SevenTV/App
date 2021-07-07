@@ -1,0 +1,26 @@
+.notify-item {
+	display: block;
+	margin: .75em;
+	padding: 1em;
+
+	.notify-heading {
+		padding-bottom: .3em;
+		.notify-title {
+			font-size: 1.15em;
+		}
+	}
+
+	.notify-parts {
+		display: inline-block;
+		word-wrap: break-word;
+
+		.mentions-emote {
+			cursor: pointer;
+			color: rgba(125, 188, 230, 0.57);
+
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+	}
+}
