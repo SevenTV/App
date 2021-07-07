@@ -7,7 +7,7 @@ import { ClientService } from 'src/app/service/client.service';
 	selector: 'app-notify-button',
 	template: `
 		<button mat-icon-button>
-			<mat-icon [matBadge]="count | async" matBadgeSize="small" matBadgeColor="warn">notifications</mat-icon>
+			<mat-icon [matBadgeHidden]="(count | async) === 0" [matBadge]="count | async" matBadgeSize="small" matBadgeColor="warn">notifications</mat-icon>
 		</button>
 	`
 })

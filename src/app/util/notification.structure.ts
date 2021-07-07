@@ -57,6 +57,13 @@ export class NotificationStructure extends Structure<'notification'> {
 		);
 	}
 
+	getTimestamp(): Observable<Date> {
+		return this.data.pipe(
+			take(1),
+			map(d => !!d?.timestamp ? new Date(d.timestamp) : new Date())
+		);
+	}
+
 	isRead(): Observable<boolean> {
 		return this.data.pipe(
 			take(1),

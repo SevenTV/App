@@ -25,10 +25,10 @@ export class NotifyMenuComponent implements OnInit, OnDestroy {
 	constructor(
 		public themingService: ThemingService,
 		private el: ElementRef<HTMLDivElement>,
+		public clientService: ClientService,
 		private logger: LoggerService,
 		private dataService: DataService,
-		private restService: RestService,
-		private clientService: ClientService
+		private restService: RestService
 	) { }
 
 	// Handle outside click: close the menu

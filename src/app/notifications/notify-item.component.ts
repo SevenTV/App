@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { formatRelative } from 'date-fns';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ThemingService } from 'src/app/service/theming.service';
 import { EmoteStructure } from 'src/app/util/emote.structure';
 import { NotificationStructure } from 'src/app/util/notification.structure';
@@ -27,6 +29,12 @@ export class NotifyItemComponent implements OnInit {
 		setTimeout(() => {
 			this.router.navigate(['/emotes', emote.getID()]);
 		}, 0);
+	}
+
+	getTimestamp(): Observable<string> {
+		return (this.notification as NotificationStructure).getTimestamp().pipe(
+			map(date => formatRelative(date, new Date()))
+		);
 	}
 
 	ngOnInit(): void {
