@@ -1,9 +1,10 @@
 import { Component, ElementRef, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { DataStructure } from '@typings/typings/DataStructure';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { delay, map, tap } from 'rxjs/operators';
+import { BehaviorSubject, from, noop, Subject } from 'rxjs';
+import { delay, filter, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
 import { ClientService } from 'src/app/service/client.service';
 import { DataService } from 'src/app/service/data.service';
+import { LoggerService } from 'src/app/service/logger.service';
 import { RestService } from 'src/app/service/rest.service';
 import { ThemingService } from 'src/app/service/theming.service';
 import { NotificationStructure } from 'src/app/util/notification.structure';
@@ -16,13 +17,15 @@ import { NotificationStructure } from 'src/app/util/notification.structure';
 
 export class NotifyMenuComponent implements OnInit, OnDestroy {
 	closed = new Subject<void>();
-	notifications = new BehaviorSubject<NotificationStructure[]>([]);
+	unreadNotifications = new BehaviorSubject<NotificationStructure[]>([]);
 
+	allClear = false;
 	loaded = false;
 
 	constructor(
 		public themingService: ThemingService,
 		private el: ElementRef<HTMLDivElement>,
+		private logger: LoggerService,
 		private dataService: DataService,
 		private restService: RestService,
 		private clientService: ClientService
@@ -48,6 +51,24 @@ export class NotifyMenuComponent implements OnInit, OnDestroy {
 		this.closed.next(undefined);
 	}
 
+	markAllRead(): void {
+		this.restService.v2.gql.query<void>({
+			query: `
+				mutation MarkAllAsRead($ids: [String!]!) {
+					markNotificationsRead(notification_ids: $ids) {
+						message
+					}
+				}
+			`,
+			variables: {
+				ids: this.unreadNotifications.getValue().map(n => n.id)
+			},
+			auth: true
+		}).subscribe({
+			error: err => this.logger.error('Couldn\'t mark notifications read', err)
+		});
+	}
+
 	ngOnInit(): void {
 		this.restService.v2.gql.query<{ user: DataStructure.TwitchUser; }>({
 			query: `
@@ -55,6 +76,8 @@ export class NotifyMenuComponent implements OnInit, OnDestroy {
 					user(id: $id) {
 						notifications {
 							id, read, title, announcement,
+							timestamp,
+							read_at,
 							users {
 								id, login, display_name,
 								profile_image_url,
@@ -77,7 +100,15 @@ export class NotifyMenuComponent implements OnInit, OnDestroy {
 		}).pipe(
 			map(res => res?.body?.data.user.notifications ?? []),
 			map(x => this.dataService.add('notification', ...x)),
-			tap(x => this.notifications.next(x)),
+
+			switchMap(all => from(all).pipe(
+				mergeMap(n => n.isRead().pipe(map(read => ({ n, read })))),
+				filter(({ read }) => read === false),
+				map(x => x.n),
+				toArray(),
+				tap(arr => arr.length === 0 ? this.allClear = true : noop())
+			)),
+			tap(x => this.unreadNotifications.next(x)),
 			delay(0)
 		).subscribe({
 			complete: () => this.loaded = true
@@ -86,6 +117,6 @@ export class NotifyMenuComponent implements OnInit, OnDestroy {
 
 	ngOnDestroy(): void {
 		this.closed.complete();
-		this.notifications.complete();
+		this.unreadNotifications.complete();
 	}
 }

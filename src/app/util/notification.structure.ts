@@ -57,6 +57,13 @@ export class NotificationStructure extends Structure<'notification'> {
 		);
 	}
 
+	isRead(): Observable<boolean> {
+		return this.data.pipe(
+			take(1),
+			map(d => d?.read ?? false)
+		);
+	}
+
 	getSnapshot(): any {
 		return undefined;
 	}

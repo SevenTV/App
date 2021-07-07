@@ -16,7 +16,15 @@
 			.close-button {
 				cursor: pointer;
 				width: 24px;
-				height: 24px;
+			}
+		}
+
+		.quick-actions {
+			margin-bottom: 1em;
+
+			.quick-action {
+				cursor: pointer;
+				color: rgba(0, 255, 75, 0.75);
 			}
 		}
 
