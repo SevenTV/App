@@ -65,6 +65,9 @@ export class NotifyMenuComponent implements OnInit, OnDestroy {
 			},
 			auth: true
 		}).subscribe({
+			next: () => {
+				this.unreadNotifications.next([]);
+			},
 			error: err => this.logger.error('Couldn\'t mark notifications read', err)
 		});
 	}
