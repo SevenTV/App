@@ -1,6 +1,6 @@
 <div class="container h-100" [@open]>
 	<!-- Action Bar  -->
-	<div class="d-flex flex-row align-items-center action-bar mat-elevation-z2 mb-1" [appColor]="themingService.bg.lighten(.2)" [isBackground]="true">
+	<div class="d-flex flex-row align-items-center action-bar mat-elevation-z2 mb-1" [appColor]="themingService.primary.lighten(.2)" [isBackground]="true">
 		<button mat-icon-button [routerLink]="['../']">
 			<mat-icon> arrow_back </mat-icon>
 		</button>
@@ -14,7 +14,7 @@
 			<div class="col-12 col-lg-7 mt-2">
 				<h2>Upload Emote</h2>
 				<span class="text-muted">
-					Pick the largest size you have, 7TV will perform the resizing for you
+					Resizing is done automatically, the image should be 128x128 or larger for best quality
 				</span>
 				<div class="my-4"></div>
 
@@ -27,12 +27,12 @@
 				</div>
 			</div>
 
-			<div class="col-12 col-lg-5 d-flex justify-content-center align-items-center">
+			<div class="col-12 col-lg-5 d-flex justify-content-center align-items-center" [class.drag-over]="draggingFile | async" (dragover)="onDragOver($event)" (drop)="onDropFile($event)">
 				<!-- Emote Upload Box -->
 				<div class="col-12 col-md-4 emote-upload-box">
 					<label for="edit-emote">
 						<input hidden formControlName="emote"> 
-						<input type="file" accept="image/png, image/jpeg, image/gif, image/webp" name="edit-emote" id="edit-emote" (change)="uploadEmote($event.target)" [disabled]="(isUploading() | async) || (isUploaded() | async)" />
+						<input type="file" accept="image/png, image/jpeg, image/gif, image/webp" name="edit-emote" id="edit-emote" (change)="uploadEmote(getEventTargetFile($event.target))" [disabled]="(isUploading() | async) || (isUploaded() | async)" />
 						<img #emoteImg [src]="emoteFormService.uploadedEmote | async"
 							[style.border-color]="(emoteControl.dirty && emoteControl.valid) ? 'lime' : (emoteControl.pristine) ? 'inherit' : 'red'"
 							matTooltip="Edit Emote">

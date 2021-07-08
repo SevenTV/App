@@ -3,7 +3,7 @@ import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, HostList
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { Router } from '@angular/router';
 import { Subject, BehaviorSubject, Observable, noop, defer, timer } from 'rxjs';
-import { catchError, defaultIfEmpty, delay, filter, map, mergeAll, switchMap, take, takeUntil, tap, toArray } from 'rxjs/operators';
+import { catchError, defaultIfEmpty, delay, map, mergeAll, switchMap, take, takeUntil, tap, toArray } from 'rxjs/operators';
 import { EmoteListService } from 'src/app/emotes/emote-list/emote-list.service';
 import { AppService } from 'src/app/service/app.service';
 import { DataService } from 'src/app/service/data.service';

@@ -2,8 +2,8 @@ import { animate, keyframes, style, transition, trigger } from '@angular/animati
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
-import { filter, map, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { delay, filter, map, take, tap } from 'rxjs/operators';
 import { EmoteFormService } from 'src/app/emotes/emote-create/emote-form.service';
 import { TOSDialogComponent } from 'src/app/emotes/emote-create/tos-dialog/tos-dialog.component';
 import { LocalStorageService } from 'src/app/service/localstorage.service';
@@ -39,6 +39,8 @@ export class EmoteCreateComponent implements OnInit {
 	get form(): FormGroup { return this.emoteFormService.form; }
 	get emoteControl(): FormControl { return this.emoteFormService.form.get('emote') as FormControl; }
 
+	draggingFile = new BehaviorSubject<boolean>(false);
+
 	isUploaded(): Observable<boolean> {
 		return this.emoteFormService.emoteData.asObservable().pipe(
 			map(data => data === null ? false : true)
@@ -62,9 +64,32 @@ export class EmoteCreateComponent implements OnInit {
 		}
 	}
 
-	uploadEmote(target: EventTarget | null): void {
-		const file = (target as any)?.files[0];
+	onDropFile(ev: DragEvent): void {
+		ev.preventDefault();
+		this.draggingFile.next(false);
 
+		this.uploadEmote(ev.dataTransfer?.files[0] ?? null);
+	}
+
+	onDragOver(event: Event): void {
+		event.stopPropagation();
+		event.preventDefault();
+
+		this.draggingFile.pipe(
+			take(1),
+			filter(x => x === false),
+
+			delay(250),
+			tap(() => this.draggingFile.next(false))
+		).subscribe();
+		this.draggingFile.next(true);
+	}
+
+	getEventTargetFile(target: EventTarget | null): File | null {
+		return (target as any)?.files[0] ?? null;
+	}
+
+	uploadEmote(file: File | null): void {
 		if (!(file instanceof File)) return this.loggerService.debug(`Canceled emote upload`), undefined;
 		const reader = new FileReader();
 		const control = this.form.get('emote') as FormControl;
