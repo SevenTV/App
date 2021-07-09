@@ -117,6 +117,18 @@
 				<span>Nothing here</span>
 				<mat-icon [svgIcon]="(themingService.getSvgIcon('zulul') | async) || ''"></mat-icon>
 			</div>
+
+			<div class="paginator">
+				<button mat-flat-button (click)="queryChannels(channelPage - 1)" [class.invisible]="channelPage <= 1">
+					<mat-icon>arrow_backward</mat-icon>
+				</button>
+
+				<span> Page {{channelPage}}/{{getTotalChannelPages() | async}} </span>
+
+				<button mat-flat-button (click)="queryChannels(channelPage + 1)" [class.invisible]="channelPage >= ((getTotalChannelPages() | async) || 0)">
+					<mat-icon>arrow_forward</mat-icon>
+				</button>
+			</div>
 		</div>
 	</div>
 

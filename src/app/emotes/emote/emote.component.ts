@@ -49,6 +49,8 @@ export class EmoteComponent implements OnInit {
 	MAX_HEIGHT = 128;
 
 	channels = new BehaviorSubject<UserStructure[]>([]);
+	channelPage = 1;
+
 	emote: EmoteStructure | undefined;
 	disableNotices = false;
 	blurred = new BehaviorSubject<boolean>(true);
@@ -192,6 +194,47 @@ export class EmoteComponent implements OnInit {
 		return this.emote?.getAlias().pipe(
 			map(a => a.length > 0 ? `(${a})` : '')
 		) ?? of('');
+	}
+
+	/**
+	 * Query the emote's channels by page & update the current set
+	 *
+	 * @param page the channels page
+	 */
+	queryChannels(page: number): void {
+		if (!this.emote) {
+			return undefined;
+		}
+
+		this.restService.v2.gql.query<{ emote: DataStructure.Emote }>({
+			query: `
+				query PaginateEmoteChannels($id: String!, $page: Int) {
+					emote(id: $id) {
+						channels(page: $page) {
+							id, login, display_name, profile_image_url
+						}
+					}
+				}
+			`,
+			variables: {
+				id: this.emote.getID(),
+				page
+			},
+			auth: true
+		}).pipe(
+			map(res => res?.body?.data.emote.channels ?? []),
+			map(chans => this.dataService.add('user', ...chans as DataStructure.TwitchUser[]))
+		).subscribe({
+			next: channels => this.channels.next(channels),
+			complete: () => this.channelPage = page
+		});
+	}
+
+	getTotalChannelPages(): Observable<number> {
+		return this.emote?.getChannelCount().pipe(
+			map(n => n ?? 0),
+			map(n => Math.floor(n / 20) + 1)
+		) ?? of(0);
 	}
 
 	ngOnInit(): void {

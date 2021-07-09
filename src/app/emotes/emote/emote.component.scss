@@ -47,13 +47,22 @@
 	.section-content {
 		margin-top: .64em;
 		margin-left: .64em;
-	}
-}
 
-.channel-card-list {
-	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
+		.channel-card-list {
+			display: flex;
+			justify-content: center;
+			flex-direction: row;
+			flex-wrap: wrap;
+		}
+
+		.paginator {
+			display: flex;
+			padding-right: 3.5em;
+			padding-left: 3.5em;
+			align-items: center;
+			justify-content: space-between;
+		}
+	}
 }
 
 .visibility-tag {
