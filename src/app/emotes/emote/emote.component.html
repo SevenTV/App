@@ -105,8 +105,8 @@
 
 	<!-- Channels Section -->
 	<div class="section-container" [appColor]="themingService.bg.darken(.075)" [isBackground]="true">
-		<span class="section-title">Channels ({{ (channels | async)?.length || 0 }})</span>
-		<div class="section-content" [ngSwitch]="((channels | async)?.length || 0) > 0">
+		<span class="section-title">Channels ({{ (emote?.getChannelCount() | async) || 0 }})</span>
+		<div class="section-content" [ngSwitch]="((emote?.getChannelCount() | async) || 0) > 0">
 			<div class="channel-card-list" *ngSwitchCase="true">
 				<app-emote-channel-card [user]="user" *ngFor="let user of channels | async">
 

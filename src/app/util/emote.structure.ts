@@ -86,6 +86,12 @@ export class EmoteStructure extends Structure<'emote'> {
 		);
 	}
 
+	getChannelCount(): Observable<number> {
+		return this.dataOnce().pipe(
+			map(d => d?.channel_count ?? 0)
+		);
+	}
+
 	getURL(size = 3): Observable<string | undefined> {
 		const rest = this.getRestService();
 

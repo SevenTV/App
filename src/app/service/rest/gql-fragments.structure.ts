@@ -7,6 +7,7 @@ export namespace GQLFragments {
 			created_at,
 			name,
 			width, height,
+			channel_count,
 			channels {
 				id, login, display_name, role {
 					id, name, color, allowed, denied, position
