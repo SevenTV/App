@@ -1,6 +1,6 @@
 <mat-toolbar [style.z-index]="100" class="d-flex flex-row justify-content-between is-toolbar" [appColor]="themingService.bg.darken(.4)" [isBackground]="true">
 	<!-- App Title -->
-	<div class="d-flex align-items-center" [routerLink]="['/']">		
+	<a href class="d-flex align-items-center unstyled-link" [routerLink]="['/']">		
 		<div class="no-select app-title" [class.is-loading]="appService.loading">
 			<!-- Logo -->
 			<div class="_logo">
@@ -18,7 +18,7 @@
 				<span class="text-nowrap _dev-stage-text" [class.d-none]="!appService.devStage">{{appService.devStage}}</span>
 			</div>
 		</div>
-	</div>
+	</a>
 
 	<!-- Navigation Buttons -->
 	<div class="nav-button-list justify-content-center flex-grow-1 d-none d-md-flex">
