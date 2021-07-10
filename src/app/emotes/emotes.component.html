@@ -6,7 +6,7 @@
         	<span class="ml-1">Emotes</span>
 		</span>
 
-		<div class="d-flex justify-content-end" [matTooltip]="(clientService.hasPermission('CREATE_EMOTE') | async) ? '' : 'You must be signed in to do that'">
+		<a href="/emotes/create" (click)="$event.preventDefault()" class="d-flex justify-content-end" [matTooltip]="(clientService.hasPermission('CREATE_EMOTE') | async) ? '' : 'You must be signed in to do that'">
 			<button mat-raised-button
 				[disabled]="(clientService.hasPermission('CREATE_EMOTE') | async) !== true"
 				
@@ -16,7 +16,7 @@
 				<mat-icon>add</mat-icon>
 				ADD EMOTE
 			</button>
-		</div>
+		</a>
     </div>
 
 	<div class="content flex-fill">
