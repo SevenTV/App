@@ -92,8 +92,9 @@ export class EmoteListComponent implements OnInit, AfterViewInit, OnDestroy {
 		public themingService: ThemingService
 	) { }
 
-	selectEmote(el: any, emote: EmoteStructure): void {
+	selectEmote(ev: MouseEvent, el: any, emote: EmoteStructure): void {
 		if (!emote.getID()) return undefined;
+		ev.preventDefault();
 
 		this.selecting.next(true);
 		this.renderer.addClass(el, 'selected-emote-card');
