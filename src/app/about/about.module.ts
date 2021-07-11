@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { AboutRouterModule } from 'src/app/about/about-routing.module';
 
@@ -7,6 +8,7 @@ import { UtilModule } from 'src/app/util/util.module';
 
 @NgModule({
 	imports: [
+		CommonModule,
 		AboutRouterModule,
 		MaterialModule,
 		UtilModule

@@ -12,5 +12,18 @@
     .content {
         display: block;
         padding: 2.5%;
+
+        .feature-list {
+            .feature-name {
+                padding-left: 1em;
+                padding-bottom: .25em;
+                padding-top: .25em;
+                display: flex;
+                align-items: center;
+                font-size: 1.15em;
+
+                span { margin-left: .5em; }
+            }
+        }
     }
 }

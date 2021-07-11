@@ -9,14 +9,18 @@
 
     <!-- Content -->
     <div class="content flex-fill">
-        <p>7TV is an open-source, free third party emote extension for Twitch</p>
-        <p></p>
-    
-        <a href="https://github.com/SevenTV" target="_blank">Help contribute on GitHub!</a>
-    
-        <p>
-            <code>It's a third party thing LULW</code>
-        </p>
+        <h2>What is 7TV?</h2>
+        <p>7TV is a new emote service and extension, providing custom emotes at no fee and supporting more formats to increase artistic freedom.</p>
+        
+        <h2>Key Features</h2>
+        <div class="feature-list">
+            <div class="feature-name" *ngFor="let f of featureList">
+                <mat-icon>circle</mat-icon>
+
+                <span>{{f}}</span>
+            </div>
+        </div>
+
     </div>
 
 </div>
