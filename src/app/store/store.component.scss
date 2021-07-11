@@ -37,7 +37,25 @@ $logosize: 18vw;
 
 		.store-heading-content {
 			z-index: 5 !important;
-			max-width: 16rem;
+			max-width: 22.5rem;
+			border-radius: 8px;
+			padding: 1em;
+
+			.promo-title {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+
+				mat-divider {
+					height: 3.5em;
+					margin-right: 1em;
+					margin-left: 1em;
+				}
+				mat-icon {
+					transform: scale(2);
+					margin-bottom: .25em;
+				}
+			}
 
 			p {
 				line-height: 1em;
@@ -54,15 +72,15 @@ $logosize: 18vw;
 		z-index: 1 !important;
 		position: absolute;
 		top: -130px;
+
 		left: -164px;
 		height: 28em;
-		padding-bottom: 18em;
 		width: 200%;
 		transform: rotate(-2deg);
 
 		background: linear-gradient(-22.5deg, #cca411, #f7f7f7b4, #cca411);
 		background-size: 400% 400%;
-		animation: gradient 14s ease infinite;
+		animation: gradient 14s ease-in-out infinite;
 
 		@keyframes gradient {
 			0% {
@@ -74,6 +92,13 @@ $logosize: 18vw;
 			100% {
 				background-position: 0% 50%;
 			}
+		}
+	}
+
+
+	@media screen and (min-width: 3250px) {
+		.store-heading-gradient {
+			top: -225px;
 		}
 	}
 }
