@@ -26,6 +26,7 @@ import { EmoteOverridesDialogComponent } from 'src/app/emotes/emote/overrides-em
 import { ContextMenuComponent } from 'src/app/util/ctx-menu/ctx-menu.component';
 import { AuditLogEntry } from 'src/app/util/audit.structure';
 import { EmoteWarningDialogComponent } from 'src/app/emotes/emote/warning-dialog.component';
+import { environment } from 'src/environments/environment';
 
 @Component({
 	selector: 'app-emote',
@@ -275,15 +276,22 @@ export class EmoteComponent implements OnInit {
 						const link = this.document.createElement('link');
 						link.setAttribute('type', 'application/json+oembed');
 
-						const data = {
-							title: this.appService.pageTitle,
-							author_name: `${emoteData?.name} ${BitField.HasBits(emoteData?.visibility ?? 0, DataStructure.Emote.Visibility.GLOBAL) ? '(Global Emote)' : `(${this.channels.getValue()?.length} Channels)`}`,
+						const query = new URLSearchParams();
+						query.append('object', Buffer.from(JSON.stringify({
+							title: this.appService.pageTitle ?? 'Unknown Page',
+							author_name: ''.concat(
+								`${emoteData?.name} by ${emoteData?.owner?.display_name ?? 'Unknown User'} `,
+								`${BitField.HasBits(emoteData?.visibility ?? 0, DataStructure.Emote.Visibility.GLOBAL) ? '(Global Emote)' : `(${emote.getSnapshot()?.channel_count ?? 0} Channels)`}`
+							),
 							author_url: `https://${appURL}`,
 							provider_name: `7TV.APP - It's like a third party thing`,
-							provider_url: 'https://7tv.app'
-						};
-						if (!data) return undefined;
-						if (data) link.setAttribute('href', `http://${this.document.location.hostname}/og/oembed/emote.json` + `?data=${Buffer.from(JSON.stringify(data)).toString('base64')}`);
+							provider_url: 'https://7tv.app',
+							type: 'photo',
+							url,
+							width: emote.width,
+							height: emote.height
+						})).toString('base64'));
+						link.setAttribute('href', `http://${environment.origin}/services/oembed?` + query.toString());
 						this.document.head.appendChild(link);
 					}
 					return undefined;
