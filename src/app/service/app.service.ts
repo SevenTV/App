@@ -22,6 +22,7 @@ export class AppService {
 	pageTitleAttr = new Subject<AppService.PageTitleAttribute[]>();
 
 	contactEmail = 'kathy@7tv.app';
+	twitterURL = 'https://twitter.com/Official_7TV';
 
 	featuredBroadcast = new BehaviorSubject<string>('');
 	announcement = new BehaviorSubject<string>('');

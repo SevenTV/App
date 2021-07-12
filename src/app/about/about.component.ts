@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { AppService } from 'src/app/service/app.service';
+import { RestService } from 'src/app/service/rest.service';
 import { ThemingService } from 'src/app/service/theming.service';
 
 @Component({
@@ -6,15 +9,17 @@ import { ThemingService } from 'src/app/service/theming.service';
 	templateUrl: './about.component.html',
 	styleUrls: ['./about.component.scss']
 })
-export class AboutComponent implements OnInit {
+export class AboutComponent implements OnInit, OnDestroy {
 	featureList = [
 		'All core functionality is free to use',
 		'Up to 200 channel emote slots by default, free forever',
 		'Support for wide and animated wide emotes (3:1 ratio)',
+		'Monthly Community Events & Contests',
 		'Downloadable for Chrome and Chromium-based browsers, Firefox, Chatterino & more',
-		'In use currently by over 8,000 channels and climbing',
-		'Less opinionated guidelines',
-		'Active Development & Open Source',
+		'Seamlessly integrates with your other Twitch extensions',
+		'Uses the newer WebP image format, resulting in much lighter images',
+		'Transparency: all moderator actions are recorded and visible publicly. No cheating involved.',
+		'Active Development & Open Source'
 	] as string[];
 
 	// Work in progress
@@ -29,11 +34,24 @@ export class AboutComponent implements OnInit {
 		}
 	] as AboutComponent.QuestionAnswer[];
 
+	discordInvite = new BehaviorSubject('');
+
 	constructor(
+		private restService: RestService,
+		public appService: AppService,
 		public themingService: ThemingService
 	) { }
 
 	ngOnInit(): void {
+		this.restService.Discord.Widget().pipe(
+			RestService.onlyResponse()
+		).subscribe({
+			next: (res) => this.discordInvite.next(res.body?.instant_invite ?? '')
+		});
+	}
+
+	ngOnDestroy(): void {
+		this.discordInvite.complete();
 	}
 
 }

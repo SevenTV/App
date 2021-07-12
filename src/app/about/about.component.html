@@ -21,6 +21,11 @@
             </div>
         </div>
 
+        <h2>Have a question?</h2>
+        <p>
+            You can contact us on our <a [href]="discordInvite | async">Discord</a> server, <a [href]="appService.twitterURL">Twitter</a>
+            or via email <a [href]="'mailto:' + appService.contactEmail "> {{ appService.contactEmail }} </a>
+        </p>
     </div>
 
 </div>
