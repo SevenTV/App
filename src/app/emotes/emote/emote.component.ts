@@ -287,9 +287,7 @@ export class EmoteComponent implements OnInit {
 							provider_name: `7TV.APP - It's like a third party thing`,
 							provider_url: 'https://7tv.app',
 							type: 'photo',
-							url,
-							width: emote.width,
-							height: emote.height
+							url
 						})).toString('base64'));
 						link.setAttribute('href', `http://${environment.origin}/services/oembed?` + query.toString());
 						this.document.head.appendChild(link);

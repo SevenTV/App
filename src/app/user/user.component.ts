@@ -4,7 +4,7 @@ import { FormControl } from '@angular/forms';
 import { Meta } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { asyncScheduler, BehaviorSubject, Observable, of, scheduled, Subject, throwError } from 'rxjs';
-import { filter, map, mapTo, mergeAll, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { concatAll, filter, map, mapTo, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { AppComponent } from 'src/app/app.component';
 import { AppService } from 'src/app/service/app.service';
 import { ClientService } from 'src/app/service/client.service';
@@ -126,7 +126,7 @@ export class UserComponent implements OnInit, OnDestroy {
 			switchMap(user => scheduled([
 				user.getEditors().pipe(map(editors => this.editors.next(editors))),
 				user.getEditorIn().pipe(map(edited => this.edited.next(edited)))
-			], asyncScheduler).pipe(mergeAll(), mapTo(user))),
+			], asyncScheduler).pipe(concatAll(), mapTo(user))),
 			tap(user => {
 				const appURL = this.document.location.host + this.router.serializeUrl(this.router.createUrlTree(['/users', String(user.id)]));
 
@@ -147,7 +147,7 @@ export class UserComponent implements OnInit, OnDestroy {
 					{ name: 'theme-color', content: '#' + (roleColor?.toString(16) ?? 'fff') }
 				]);
 
-				if (AppComponent.isBrowser.getValue() !== true) {
+				if (!AppComponent.isBrowser.getValue()) {
 					const link = this.document.createElement('link');
 					link.setAttribute('type', 'application/json+oembed');
 

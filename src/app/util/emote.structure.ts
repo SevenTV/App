@@ -2,13 +2,14 @@ import { BitField } from '@typings/src/BitField';
 import { Constants } from '@typings/src/Constants';
 import { DataStructure } from '@typings/typings/DataStructure';
 import { EMPTY, from, iif, Observable, of, throwError } from 'rxjs';
-import { defaultIfEmpty, filter, map, mapTo, mergeAll, mergeMap, switchMap, take, tap } from 'rxjs/operators';
+import { defaultIfEmpty, filter, map, mapTo, mergeAll, switchMap, take, tap } from 'rxjs/operators';
 import { AppInjector } from 'src/app/service/app.injector';
 import { DataService } from 'src/app/service/data.service';
 import { RestService } from 'src/app/service/rest.service';
 import { Structure } from 'src/app/util/abstract.structure';
 import { AuditLogEntry } from 'src/app/util/audit.structure';
 import { UserStructure } from 'src/app/util/user.structure';
+import { environment } from 'src/environments/environment';
 
 export class EmoteStructure extends Structure<'emote'> {
 	private id = '';
@@ -93,12 +94,10 @@ export class EmoteStructure extends Structure<'emote'> {
 	}
 
 	getURL(size = 3): Observable<string | undefined> {
-		const rest = this.getRestService();
-
-		return rest ? this.dataOnce().pipe(
+		return this.dataOnce().pipe(
 			take(1),
-			map(d => this.getRestService().CDN.Emote(String(d?.id), size))
-		) : of('');
+			map(() => `${environment.cdnUrl}/emote/${this.id}/${size}x`)
+		);
 	}
 
 	getTags(): Observable<string[] | undefined> {
