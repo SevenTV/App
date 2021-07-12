@@ -16,7 +16,7 @@
                         <app-user-name [clickable]="false" [size]="[0, 1]" [showAvatar]="false" [user]="user | async"></app-user-name>
                     </div>
 
-                    <div class="user-details" [style.color]="(user | async)?.getColor() | async" *ngIf="!!(user | async)">
+                    <div class="user-details" [style.color]="(user | async)?.getColor() | async" *ngIf="(user | async) !== null">
                         <div class="user-buttons">
                             <div class="user-button" matTooltip="Twitch Channel" (click)="openTwitchChannel()" [appColor]="themingService.colors.twitch_purple">
                                 <mat-icon [svgIcon]="(themingService.getSvgIcon('twitch') | async) || ''"></mat-icon>
