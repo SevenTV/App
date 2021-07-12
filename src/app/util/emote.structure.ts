@@ -126,11 +126,11 @@ export class EmoteStructure extends Structure<'emote'> {
 	 * Get the emote's alias, per the client user or the user they are editing
 	 */
 	getAlias(): Observable<string> {
-		if (!this.restService) {
-			return throwError(Error('RestService Not Loaded'));
+		const client = this.getRestService()?.clientService;
+		if (!client) {
+			return of('');
 		}
 
-		const client = this.restService.clientService;
 		return of(client.isImpersonating).pipe(
 			switchMap(isEditor => iif(() => isEditor === true,
 				client.impersonating.pipe(take(1)),

@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpProgressEvent, HttpResponse } from '@angular/common/http';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
-import { iif, Observable, of, throwError } from 'rxjs';
+import { EMPTY, iif, Observable, of, throwError } from 'rxjs';
 import { filter, map, switchMap, tap } from 'rxjs/operators';
 import { ClientService } from 'src/app/service/client.service';
 import { RestV1 } from 'src/app/service/rest/rest-v1.structure';
@@ -84,6 +84,10 @@ export class RestService {
 		options?: Partial<RestService.CreateRequestOptions>,
 		apiVersion: RestService.ApiVersion = 'v2'
 	): Observable<HttpResponse<T> | HttpProgressEvent> {
+		if (this.platformId === 'server' && !options?.runOnSSR) {
+			return EMPTY;
+		}
+
 		const uri = (route.startsWith('http') ? '' : this.BASE[apiVersion]) + route;
 		const opt = {
 			observe: 'events',
@@ -121,6 +125,7 @@ export namespace RestService {
 		headers: { [key: string]: string };
 		auth: boolean;
 		body?: any;
+		runOnSSR?: boolean;
 	}
 
 	export namespace Result {

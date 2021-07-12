@@ -11,7 +11,8 @@ export class GraphQL {
 				query: options.query.replace(/\s{2,}/g, ''),
 				variables: options.variables
 			},
-			auth: options.auth
+			auth: options.auth,
+			runOnSSR: options.runOnSSR
 		}, 'v2').pipe(
 			RestService.onlyResponse()
 		);
@@ -23,6 +24,7 @@ export namespace GraphQL {
 		query: string;
 		auth?: boolean;
 		variables?: { [key: string]: any };
+		runOnSSR?: boolean;
 	}
 	export interface QueryResult<T> {
 		data: T;

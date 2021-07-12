@@ -30,7 +30,8 @@ export class RestV2 {
 			variables: {
 				id
 			},
-			auth: true
+			auth: true,
+			runOnSSR: true
 		}).pipe(
 			map(res => ({
 				user: res?.body?.data.user as DataStructure.TwitchUser
@@ -126,7 +127,8 @@ export class RestV2 {
 
 				${isFiltered ? '' : GQLFragments.FullEmote(includeActivity)}
 			`,
-			auth: true
+			auth: true,
+			runOnSSR: true
 		}).pipe(
 			map(res => ({ emote: res?.body?.data.emote as DataStructure.Emote }))
 		);

@@ -100,7 +100,6 @@ export class AppComponent implements OnInit {
 				switchMap(dialogRef => dialogRef.afterClosed()),
 				switchMap(accepted => iif(() => accepted === true,
 					defer(() => this.updateSW()).pipe(
-						delay(5000),
 						tap(() => window.location.reload()),
 						tap(() => console.log('Updating app...'))
 					),

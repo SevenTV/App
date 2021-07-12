@@ -32,14 +32,16 @@ export function app(): express.Express {
 		maxAge: '1y'
 	}));
 
-	server.get('/og/oembed/:type', (req, res) => {
-		if (!req.query.data) return res.status(400).send('Expected base64 encoded data query');
-		const data = JSON.parse(Buffer.from(req.query.data.toString(), 'base64').toString('utf8'));
+	server.get('/services/oembed', (req, res) => {
+		let data = req.query.object as string;
+		try {
+			data = JSON.parse(Buffer.from(data as string, 'base64').toString('utf8'));
+		} catch (err) {
+			console.error('oembed object parse error,', err);
+			return res.status(400).send(err.message);
+		}
 
-		res.contentType('application/json').status(200).send({
-			...data
-		});
-		return undefined;
+		return res.contentType('application/json').status(200).send(data);
 	});
 
 	// All regular routes use the Universal engine
