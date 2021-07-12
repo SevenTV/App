@@ -11,7 +11,7 @@ export const environment = {
 			url: 'api.7tv.app/v2'
 		}
 	},
-	platformApiUrl: (platform: 'browser' | 'server', version: 'v1' | 'v2'): string => `${platform === 'server' ? 'http' : 'https'}://${environment.api[version].url}`,
+	platformApiUrl: (platform: 'browser' | 'server', version: 'v1' | 'v2'): string => `https://${environment.api[version].url}`,
 	cdnUrl: 'https://cdn.7tv.app',
 	wsUrl: 'wss://api.7tv.app',
 
