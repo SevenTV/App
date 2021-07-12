@@ -1,9 +1,11 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
+import { Meta } from '@angular/platform-browser';
+import { ActivatedRoute, Router } from '@angular/router';
 import { asyncScheduler, BehaviorSubject, Observable, of, scheduled, Subject, throwError } from 'rxjs';
 import { filter, map, mapTo, mergeAll, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { AppComponent } from 'src/app/app.component';
 import { AppService } from 'src/app/service/app.service';
 import { ClientService } from 'src/app/service/client.service';
 import { DataService } from 'src/app/service/data.service';
@@ -11,9 +13,9 @@ import { LoggerService } from 'src/app/service/logger.service';
 import { RestService } from 'src/app/service/rest.service';
 import { RestV2 } from 'src/app/service/rest/rest-v2.structure';
 import { ThemingService } from 'src/app/service/theming.service';
-import { UserRoleDialogComponent } from 'src/app/user/dialog/user-role-dialog.component';
 import { RoleStructure } from 'src/app/util/role.structure';
 import { UserStructure } from 'src/app/util/user.structure';
+import { environment } from 'src/environments/environment';
 
 @Component({
 	selector: 'app-user',
@@ -31,13 +33,15 @@ export class UserComponent implements OnInit, OnDestroy {
 	editorControl = new FormControl('');
 
 	constructor(
+		@Inject(DOCUMENT) private document: Document,
+		private router: Router,
 		private route: ActivatedRoute,
 		private appService: AppService,
 		private loggerService: LoggerService,
 		private restService: RestService,
+		private metaService: Meta,
 		private dataService: DataService,
 		private cdr: ChangeDetectorRef,
-		private dialog: MatDialog,
 		public clientService: ClientService,
 		public themingService: ThemingService
 	) { }
@@ -124,9 +128,40 @@ export class UserComponent implements OnInit, OnDestroy {
 				user.getEditorIn().pipe(map(edited => this.edited.next(edited)))
 			], asyncScheduler).pipe(mergeAll(), mapTo(user))),
 			tap(user => {
+				const appURL = this.document.location.host + this.router.serializeUrl(this.router.createUrlTree(['/users', String(user.id)]));
+
 				this.appService.pageTitleAttr.next([ // Update page title
 					{ name: 'User', value: user.getSnapshot()?.display_name ?? '' }
 				]);
+				const roleName = user.getSnapshot()?.role?.name;
+				const roleColor = user.getSnapshot()?.role?.color;
+				const emoteCount = user.getSnapshot()?.emotes.length;
+				const maxEmoteCount = user.getSnapshot()?.emote_slots;
+				const displayName = user.getSnapshot()?.display_name ?? '';
+				this.metaService.addTags([
+					// { name: 'og:title', content: this.appService.pageTitle },
+					// { name: 'og:site_name', content: this.appService.pageTitle },
+					{ name: 'og:description', content: `${displayName} is${!!roleName ? ` ${roleName}` : ''} on 7TV with ${emoteCount}/${maxEmoteCount} emotes enabled`},
+					{ name: 'og:image', content: user.getSnapshot()?.profile_image_url ?? '' },
+					{ name: 'og:image:type', content: 'image/png' },
+					{ name: 'theme-color', content: '#' + (roleColor?.toString(16) ?? 'fff') }
+				]);
+
+				if (AppComponent.isBrowser.getValue() !== true) {
+					const link = this.document.createElement('link');
+					link.setAttribute('type', 'application/json+oembed');
+
+					const query = new URLSearchParams();
+					query.append('object', Buffer.from(JSON.stringify({
+						title: this.appService.pageTitle,
+						author_name: displayName,
+						author_url: `https://${appURL}`,
+						provider_name: `7TV.APP - It's like a third party thing`,
+						provider_url: 'https://7tv.app'
+					})).toString('base64'));
+					link.setAttribute('href', `http://${environment.origin}/services/oembed?` + query.toString());
+					this.document.head.appendChild(link);
+				}
 			})
 		).subscribe({
 			error: (err) => this.loggerService.error('Couldn\'t fetch user', err)
