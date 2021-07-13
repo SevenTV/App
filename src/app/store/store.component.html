@@ -7,9 +7,15 @@
 
 		<!-- Store Heading -->
 		<div class="store-heading">
-			<div class="store-heading-content">
-				<p>Become a 7TV Suscriber!</p>
-				<span>Get some cool cosmetic perks and support the developers</span>
+			<div class="store-heading-content" [appColor]="themingService.bg.opaquer(-.85).darken(.1)" [isBackground]="true">
+				<div class="promo-title">
+					<mat-icon [style.color]="themingService.colors.app_subscriber">star</mat-icon>
+					<mat-divider [vertical]="true"></mat-divider>
+					<p>Become a 7TV Suscriber!</p>
+				</div>
+				<div class="promo-description">
+					<span>Get some cool cosmetic perks, additional functionality and support the development</span>
+				</div>
 			</div>
 		</div>
 		<div class="store-heading-gradient" #gradient></div>

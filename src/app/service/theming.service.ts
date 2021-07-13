@@ -42,7 +42,8 @@ export class ThemingService {
 
 		twitch_purple: new Color('#9146FF'),
 		discord_blurple: new Color('#7289DA'),
-		twitter_blue: new Color('#1DA1F2')
+		twitter_blue: new Color('#1DA1F2'),
+		app_subscriber: new Color('#D2B031')
 	};
 
 	images = {

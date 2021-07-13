@@ -14,7 +14,7 @@ export class StoreComponent implements OnInit {
 	) { }
 
 	get bannerHeight(): number {
-		return this.gradient?.nativeElement.scrollHeight ?? 0;
+		return (this.gradient?.nativeElement.scrollHeight ?? 0) - 96;
 	}
 
 	ngOnInit(): void {}

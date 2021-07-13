@@ -28,6 +28,9 @@ const routes: Routes = [
 		path: 'subscribe',
 		loadChildren: () => import('src/app/store/store.module').then(m => m.StoreModule)
 	},
+	{ path: 'store', redirectTo: 'subscribe' },
+	{ path: 'donate', redirectTo: 'subscribe' },
+
 	{
 		path: 'admin',
 		// canLoad: [AdminGuard],

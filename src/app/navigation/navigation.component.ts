@@ -47,7 +47,7 @@ export class NavigationComponent implements OnInit {
 			name: 'subscribe',
 			path: '/subscribe',
 			color: '#D2B031',
-			icon: 'shopping_cart',
+			icon: 'star',
 			condition: of(undefined).pipe(
 				delay(0),
 				map(() => AppComponent.isBrowser.getValue() ? this.windowRef.getNativeWindow()?.location.pathname === '/subscribe' : false)
