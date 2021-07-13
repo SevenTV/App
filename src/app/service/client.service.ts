@@ -44,6 +44,15 @@ export class ClientService extends UserStructure {
 			)
 		},
 		{
+			label: 'Set as Featured Broadcast',
+			icon: 'stars',
+			color: '#03fc24',
+			condition: () => this.hasPermission('EDIT_APP_META'),
+			click: victim => this.getRestService().v2.SetFeaturedBroadcast(victim.getSnapshot()?.login ?? '').pipe(
+				tap(() => this.openSnackBar(`Now featuring ${victim.getSnapshot()?.display_name}`, 'OK'))
+			)
+		},
+		{
 			label: 'Ban',
 			icon: 'gavel',
 			color: this.themingService.warning,
