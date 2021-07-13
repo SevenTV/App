@@ -1,4 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { ClientService } from 'src/app/service/client.service';
+import { RestService } from 'src/app/service/rest.service';
 import { ThemingService } from 'src/app/service/theming.service';
 import { UserStructure } from 'src/app/util/user.structure';
 
@@ -12,6 +15,8 @@ export class HomeFeaturedStreamComponent implements OnInit {
 	@Input() featuredUser: UserStructure | null = null;
 
 	constructor(
+		private restService: RestService,
+		private clientService: ClientService,
 		public themingService: ThemingService
 	) { }
 
@@ -35,6 +40,18 @@ export class HomeFeaturedStreamComponent implements OnInit {
 
 	openStream(): void {
 		window.open(this.featuredUser?.getTwitchURL(), '_blank');
+	}
+
+	canManage(): Observable<boolean> {
+		return this.clientService.hasPermission('EDIT_APP_META');
+	}
+
+	unfeature(ev: MouseEvent): void {
+		ev.preventDefault();
+
+		this.restService.v2.SetFeaturedBroadcast('').subscribe({
+			next: () => this.clientService.openSnackBar('Removed the current featured stream', 'OK')
+		});
 	}
 
 	ngOnInit(): void {

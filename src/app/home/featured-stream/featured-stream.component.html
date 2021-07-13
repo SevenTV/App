@@ -10,10 +10,18 @@
 				</div>
 			</div>
 
-			<div class="why-is-this text-muted" (click)="openStream()">
-				<mat-icon>link</mat-icon>
-				<span class="mx-1"></span>
-				<span>Check out this 7TV-enabled livestream!</span>
+			<div class="why-is-this text-muted">
+				<div (click)="openStream()">
+					<mat-icon>link</mat-icon>
+					<span class="mx-1"></span>
+					<span>Check out this 7TV-enabled livestream!</span>
+				</div>
+
+				<div class="unfeature" *ngIf="canManage() | async">
+					<button (click)="unfeature($event)" mat-icon-button color="warn" matTooltip="Stop featuring">
+						<mat-icon> close </mat-icon>
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>

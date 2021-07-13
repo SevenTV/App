@@ -25,10 +25,16 @@
 			justify-content: space-between;
 		}
 		.why-is-this {
-			cursor: pointer;
 			display: flex;
-			align-items: center;
-			margin-top: 6px;
+			flex-direction: row;
+			justify-content: space-between;
+
+			:first-child {
+				cursor: pointer;
+				display: flex;
+				align-items: center;
+				margin-top: 6px;
+			}
 		}
 
 		border-bottom-left-radius: 6px;
