@@ -334,6 +334,24 @@ export class RestV2 {
 		);
 	}
 
+	SetFeaturedBroadcast(channel: string): Observable<void> {
+		return this.gql.query<void>({
+			query: `
+				mutation EditMeta($props: MetaInput!) {
+					editApp(properties: $props) {
+						message
+					}
+				}
+			`,
+			auth: true,
+			variables: {
+				props: { featured_broadcast: channel }
+			}
+		}).pipe(
+			mapTo(undefined)
+		);
+	}
+
 	BanUser(victimID: string, expireAt: Date, reason = ''): Observable<void> {
 		return this.gql.query<{}>({
 			query: `
