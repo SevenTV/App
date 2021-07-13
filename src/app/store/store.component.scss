@@ -1,8 +1,3 @@
-.store {
-	display: block;
-	height: 100%;
-}
-
 $logosize: 18vw;
 .store-banner {
 	.store-logo {
@@ -101,4 +96,14 @@ $logosize: 18vw;
 			top: -225px;
 		}
 	}
+}
+
+.store {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.store-content {
+	height: 100%;
 }

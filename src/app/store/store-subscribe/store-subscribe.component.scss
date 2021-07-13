@@ -1,7 +1,11 @@
 .store-subscribe {
 	height: 100%;
-	margin-right: 15%;
-	margin-left: 15%;
 
-	color:red;
+	display: flex;
+	justify-content: space-around;
+	flex-direction: row;
+
+	.subscription-product {
+		min-width: 16em;
+	}
 }
