@@ -123,11 +123,11 @@ export class HomeComponent implements OnInit {
 		},
 		{
 			name: 'Privacy Policy',
-			click: () => this.router.navigate(['/legal', 'privacy'])
+			route: ['/legal', 'privacy']
 		},
 		{
 			name: 'Terms of Service',
-			click: () => this.router.navigate(['/legal', 'tos'])
+			route: ['/legal', 'tos']
 		}
 	] as HomeComponent.FooterOptions[];
 
@@ -281,6 +281,6 @@ export namespace HomeComponent {
 	export interface FooterOptions {
 		name: string;
 		path?: string;
-		click?: () => void;
+		route?: string[];
 	}
 }

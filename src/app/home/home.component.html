@@ -157,7 +157,7 @@
 	<div class="d-flex flex-row footer-options justify-content-center" [appColor]="themingService.bg.lighten(.05)" [isBackground]="true">
 		<span class="d-flex flex-row align-items-center footer-option" *ngFor="let btn of footerOptions; let index = index;">
 			<a *ngIf="!!btn.path" target="_blank" [href]="btn.path" class="text-muted">{{btn.name}}</a>
-			<a *ngIf="!!btn.click" (click)="btn.click()"> {{btn.name}} </a>
+			<a *ngIf="!!btn.route" [routerLink]="btn.route"> {{btn.name}} </a>
 
 			<div *ngIf="footerOptions.length > (index + 1)" class="mx-2 separator-ball d-block"></div>
 		</span>
