@@ -141,7 +141,7 @@ export class EmoteListComponent implements OnInit, AfterViewInit, OnDestroy {
 
 		const size = this.calculateSizedRows();
 		return this.restService.v2.SearchEmotes(
-			(this.pageOptions?.pageIndex ?? (page - 1)) + 1,
+			this.pageOptions?.pageIndex,
 			Math.max(EmoteListComponent.MINIMUM_EMOTES, size ?? EmoteListComponent.MINIMUM_EMOTES),
 			options ?? this.currentSearchOptions
 		).pipe(
@@ -188,10 +188,10 @@ export class EmoteListComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.updateQueryParams();
 
 		// Save PageIndex title attr
-		this.appService.pushTitleAttributes({ name: 'PageIndex', value: `- ${ev.pageIndex + 1}/${Number((ev.length / ev.pageSize).toFixed(0))}` });
+		this.appService.pushTitleAttributes({ name: 'PageIndex', value: `- ${ev.pageIndex}/${Number((ev.length / ev.pageSize).toFixed(0))}` });
 
 		// Fetch new set of emotes
-		this.getEmotes(ev.pageIndex + 1).pipe(
+		this.getEmotes(ev.pageIndex).pipe(
 			tap(emotes => this.emotes.next(emotes))
 		).subscribe();
 	}
