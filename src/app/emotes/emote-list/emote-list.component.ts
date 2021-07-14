@@ -1,13 +1,12 @@
 import { trigger, transition, query, style, stagger, animate, keyframes, group, state } from '@angular/animations';
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, HostListener, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { Router } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Subject, BehaviorSubject, Observable, noop, defer, timer } from 'rxjs';
 import { catchError, defaultIfEmpty, delay, map, mergeAll, switchMap, take, takeUntil, tap, toArray } from 'rxjs/operators';
 import { EmoteListService } from 'src/app/emotes/emote-list/emote-list.service';
 import { AppService } from 'src/app/service/app.service';
 import { DataService } from 'src/app/service/data.service';
-import { LocalStorageService } from 'src/app/service/localstorage.service';
 import { RestService } from 'src/app/service/rest.service';
 import { RestV2 } from 'src/app/service/rest/rest-v2.structure';
 import { ThemingService } from 'src/app/service/theming.service';
@@ -84,8 +83,8 @@ export class EmoteListComponent implements OnInit, AfterViewInit, OnDestroy {
 		private restService: RestService,
 		private renderer: Renderer2,
 		private router: Router,
+		private route: ActivatedRoute,
 		private appService: AppService,
-		private localStorage: LocalStorageService,
 		private emoteListService: EmoteListService,
 		private dataService: DataService,
 		public themingService: ThemingService
@@ -104,12 +103,26 @@ export class EmoteListComponent implements OnInit, AfterViewInit, OnDestroy {
 		}, 775);
 	}
 
+	private updateQueryParams(): void {
+		const merged = {
+			...this.currentSearchOptions,
+			...{ page: (this.pageOptions?.pageIndex ?? 0) }
+		};
+
+		this.router.navigate(['.'], {
+			relativeTo: this.route,
+			queryParams: Object.keys(merged).map(k => ({ [k]: (merged as any)[k as any] })).reduce((a, b) => ({ ...a, ...b })),
+			queryParamsHandling: 'merge'
+		});
+	}
+
 	handleSearchChange(change: Partial<RestV2.GetEmotesOptions>): void {
 		const queryString = Object.keys(change).map(k => `${k}=${change[k as keyof RestV2.GetEmotesOptions]}`).join('&');
 
 		this.appService.pushTitleAttributes({ name: 'SearchOptions', value: `- ${queryString}` });
-
 		this.currentSearchOptions = { ...this.currentSearchOptions, ...change as RestV2.GetEmotesOptions };
+		this.updateQueryParams();
+
 		this.goToFirstPage();
 		this.getEmotes(undefined, this.currentSearchOptions).pipe(
 			delay(50),
@@ -128,7 +141,7 @@ export class EmoteListComponent implements OnInit, AfterViewInit, OnDestroy {
 
 		const size = this.calculateSizedRows();
 		return this.restService.v2.SearchEmotes(
-			(this.pageOptions?.page ?? (page - 1)) + 1,
+			(this.pageOptions?.pageIndex ?? (page - 1)) + 1,
 			Math.max(EmoteListComponent.MINIMUM_EMOTES, size ?? EmoteListComponent.MINIMUM_EMOTES),
 			options ?? this.currentSearchOptions
 		).pipe(
@@ -169,16 +182,13 @@ export class EmoteListComponent implements OnInit, AfterViewInit, OnDestroy {
 	 * Handle pagination changes
 	 */
 	onPageEvent(ev: PageEvent): void {
-		// Save page options to localstorage
-		const pageOptions = this.pageOptions = {
-			page: ev.pageIndex,
-			pageSize: ev.pageSize,
-			length: ev.length
-		} as EmoteListComponent.PersistentPageOptions;
-		this.localStorage.setItem('pagination', JSON.stringify(pageOptions));
+		this.pageOptions = {
+			...ev
+		};
+		this.updateQueryParams();
 
 		// Save PageIndex title attr
-		this.appService.pushTitleAttributes({ name: 'PageIndex', value: `- ${ev.pageIndex + 1}/${Number((ev.length / ev.pageSize).toFixed(0)) + 1}` });
+		this.appService.pushTitleAttributes({ name: 'PageIndex', value: `- ${ev.pageIndex + 1}/${Number((ev.length / ev.pageSize).toFixed(0))}` });
 
 		// Fetch new set of emotes
 		this.getEmotes(ev.pageIndex + 1).pipe(
@@ -224,36 +234,41 @@ export class EmoteListComponent implements OnInit, AfterViewInit, OnDestroy {
 		timer(1000).pipe(
 			takeUntil(this.resized.pipe(take(1))),
 
-			switchMap(() => this.getEmotes(this.pageOptions?.page, {})),
+			switchMap(() => this.getEmotes(this.pageOptions?.pageIndex, {})),
 			tap(emotes => this.emotes.next(emotes))
 		).subscribe();
 	}
 
 	ngAfterViewInit(): void {
-		const pageSize = this.calculateSizedRows() ?? 0;
-		this.pageSize.next(pageSize);
-
 		this.currentSearchOptions = {
 			sortBy: this.emoteListService.searchForm.get('sortBy')?.value,
 			sortOrder: this.emoteListService.searchForm.get('sortOrder')?.value,
 		} as RestV2.GetEmotesOptions;
 
 		// Get persisted page options?
-		const pageOptions = this.localStorage.getItem('pagination');
-		if (!!pageOptions) { // If persistence options found set the page
-			const o = JSON.parse(pageOptions) as EmoteListComponent.PersistentPageOptions; // Parse JSON from localStorage
+		this.route.queryParamMap.pipe(
+			defaultIfEmpty({} as ParamMap),
+			take(1),
+			map(params => {
+				return {
+					page: params.has('page') ? Number(params.get('page')) : 0
+				};
+			})
+		).subscribe({
+			next: opt => {
+				const d = {
+					pageIndex: !isNaN(opt.page) ? opt.page : 1,
+					pageSize: Math.max(EmoteListComponent.MINIMUM_EMOTES, this.calculateSizedRows() ?? 0),
+					length: 0,
+				};
+				this.updateQueryParams();
 
-			this.paginator?.page.next({
-				pageIndex: o.page,
-				pageSize: Math.max(EmoteListComponent.MINIMUM_EMOTES, pageSize),
-				length: o.length,
-			});
-			this.pageOptions = o;
-		} else {
-			this.getEmotes(1).pipe(
-				map(emotes => this.emotes.next(emotes))
-			).subscribe();
-		}
+				this.paginator?.page.next(d);
+				this.pageOptions = d;
+			}
+		});
+
+		this.pageSize.next(this.calculateSizedRows() ?? 0);
 	}
 
 	ngOnInit(): void { }
@@ -266,7 +281,7 @@ export class EmoteListComponent implements OnInit, AfterViewInit, OnDestroy {
 export namespace EmoteListComponent {
 	export interface PersistentPageOptions {
 		pageSize: number;
-		page: number;
+		pageIndex: number;
 		length: number;
 	}
 
