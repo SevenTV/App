@@ -253,7 +253,15 @@ export class EmoteListComponent implements OnInit, AfterViewInit, OnDestroy {
 			take(1),
 			map(params => {
 				return {
-					page: params.has('page') ? Number(params.get('page')) : 0
+					page: params.has('page') ? Number(params.get('page')) : 1,
+					search: {
+						sortBy: params.get('sortBy'),
+						sortOrder: params.get('sortOrder'),
+						globalState: params.get('globalState'),
+						query: params.get('query'),
+						submitter: params.get('submitter'),
+						channel: params.get('channel')
+					}
 				};
 			})
 		).subscribe({
@@ -264,6 +272,7 @@ export class EmoteListComponent implements OnInit, AfterViewInit, OnDestroy {
 					length: 0,
 				};
 				this.updateQueryParams();
+				this.currentSearchOptions = opt.search as any;
 
 				this.paginator?.page.next(d);
 				this.pageOptions = d;

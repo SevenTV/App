@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { asyncScheduler, BehaviorSubject, EMPTY, scheduled } from 'rxjs';
 import { map, mergeAll, mergeMap, take, tap, throttleTime } from 'rxjs/operators';
@@ -16,6 +16,7 @@ import { ThemingService } from 'src/app/service/theming.service';
 })
 export class EmoteSearchComponent implements OnInit {
 	@Output() searchChange = new EventEmitter<Partial<RestV2.GetEmotesOptions>>();
+	@Input() defaultSearchOptions: Partial<RestV2.GetEmotesOptions> | undefined;
 
 	get form(): FormGroup {
 		return this.emoteListService.searchForm;
@@ -65,8 +66,10 @@ export class EmoteSearchComponent implements OnInit {
 	changeSearchMode(opt: EmoteSearchComponent.ModeMenuOption): void {
 		this.selectedSearchMode.pipe(
 			take(1),
+			tap(mode => this.form.get(mode.id)?.reset()),
 			tap(mode => { delete this.current[mode.id as keyof RestV2.GetEmotesOptions]; }),
-			tap(o => this.selectedSearchMode.next(opt))
+
+			tap(() => this.selectedSearchMode.next(opt))
 		).subscribe();
 	}
 
@@ -82,12 +85,12 @@ export class EmoteSearchComponent implements OnInit {
 		ev.preventDefault();
 
 		(ev.target as HTMLInputElement).blur();
-		this.form.get('name')?.patchValue((ev.target as HTMLInputElement).value);
+		this.form.get('query')?.patchValue((ev.target as HTMLInputElement).value);
 	}
 
 	ngOnInit(): void {
 		scheduled([
-			this.form.get('name')?.valueChanges.pipe( // Look for changes to the name input form field
+			this.form.get('query')?.valueChanges.pipe( // Look for changes to the name input form field
 				mergeMap((value: string) => this.selectedSearchMode.pipe(take(1), map(mode => ({ mode, value })))),
 				map(({ value, mode }) => ({ [mode.id]: value })) // Map SearchMode to value
 			) ?? EMPTY,
@@ -109,11 +112,24 @@ export class EmoteSearchComponent implements OnInit {
 			) ?? EMPTY
 		], asyncScheduler).pipe(
 			mergeAll(),
-			map(v => this.current = { ...this.current, ...v }),
+			map(v => this.current = { ...this.current, ...v } as any),
 			throttleTime(250)
 		).subscribe({
 			next: (v) => this.searchChange.next(v) // Emit the change
 		});
+
+		setTimeout(() => {
+			if (!!this.defaultSearchOptions) {
+				for (const k of Object.keys(this.form.getRawValue())) {
+					const v = (this.defaultSearchOptions as any)[k as any];
+					if (!v) {
+						continue;
+					}
+
+					this.form.get(k)?.patchValue(v);
+				}
+			}
+		}, 0);
 	}
 
 }

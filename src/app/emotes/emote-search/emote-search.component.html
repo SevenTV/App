@@ -11,7 +11,7 @@
 		<div class="_search-by-name">
 			<mat-form-field appearance="outline">
 				<mat-label> Search {{(selectedSearchMode | async)?.label}} </mat-label>
-				<input id="searchbox" type="text" matInput formControlName="name" [(ngModel)]="nameSearchBox" (keyup.enter)="handleEnterPress($event)">
+				<input id="searchbox" type="text" matInput formControlName="query" [(ngModel)]="nameSearchBox" (keyup.enter)="handleEnterPress($event)">
 			</mat-form-field>
 			<button for="searchbox" type="submit" class="d-none"></button>
 			<div class="mx-1"></div>

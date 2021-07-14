@@ -5,7 +5,7 @@ import { LocalStorageService } from 'src/app/service/localstorage.service';
 
 import { BitField } from '@typings/src/BitField';
 import { DataStructure } from '@typings/typings/DataStructure';
-import { defer, EMPTY, iif, of } from 'rxjs';
+import { EMPTY, iif, of } from 'rxjs';
 import { switchMap, map, tap, filter, take, delay } from 'rxjs/operators';
 import { EmoteDeleteDialogComponent } from 'src/app/emotes/emote/delete-emote-dialog.component';
 import { EmoteOwnershipDialogComponent } from 'src/app/emotes/emote/transfer-emote-dialog.component';
@@ -28,7 +28,7 @@ export class EmoteListService {
 	currentPageSize = Number(this.localStorage.getItem('el_pagination_size')) ?? 0;
 
 	searchForm = new FormGroup({
-		name: new FormControl('', { updateOn: 'blur' }),
+		query: new FormControl('', { updateOn: 'blur' }),
 		globalState: new FormControl('include'),
 		channel: new FormControl(false),
 		sortBy: new FormControl('popularity'),

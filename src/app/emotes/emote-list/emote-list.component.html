@@ -1,7 +1,7 @@
 <div class="emote-list flex-fill row justify-content-center justify-content-lg-start">
 	<!-- Sidebar -->
 	<div class="emotes-sidebar col-12 col-lg-3 col-xl-3">
-		<app-emote-search (searchChange)="handleSearchChange($event)"></app-emote-search>
+		<app-emote-search [defaultSearchOptions]="currentSearchOptions" (searchChange)="handleSearchChange($event)"></app-emote-search>
 	</div>
 	<div class="col-12 d-block d-lg-none my-3"></div>
 

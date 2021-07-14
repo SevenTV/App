@@ -42,19 +42,28 @@ export class RestV2 {
 	SearchEmotes(page = 1, pageSize = 16, options?: Partial<RestV2.GetEmotesOptions>): Observable<{ emotes: DataStructure.Emote[]; total_estimated_size: number; }> {
 		return this.gql.query<{ search_emotes: DataStructure.Emote[] }>({
 			query: `
-				{
+				query(
+					$query: String!,
+					$page: Int,
+					$pageSize: Int,
+					$globalState: String,
+					$sortBy: String,
+					$sortOrder: Int,
+					$channel: String,
+					$submitted_by: String,
+					$filter: EmoteFilter
+				) {
 					search_emotes(
-						query: "${options?.query ?? ''}",
-						limit: ${pageSize},
-						page: ${page},
-						pageSize: ${pageSize}
-						${(options?.globalState && `, globalState: "${options.globalState}"`) ?? ''}
-						${(options?.sortBy && `, sortBy: "${options.sortBy}"`) ?? ''}
-						${typeof options?.sortOrder === 'number' ? `, sortOrder: ${options.sortOrder}` : ''}
-						${(options?.channel && `, channel: "${options.channel}"`) ?? ''}
-						${(options?.filter && `, filter: {
-							visibility: ${options.filter.visibility}
-						}`) ?? ''}
+						query: $query,
+						limit: $pageSize,
+						page: $page,
+						pageSize: $pageSize,
+						globalState: $globalState,
+						sortBy: $sortBy,
+						sortOrder: $sortOrder,
+						channel: $channel,
+						submitted_by: $submitted_by,
+						filter: $filter
 					) {
 						id,
 						visibility,
@@ -72,6 +81,18 @@ export class RestV2 {
 					}
 				}
 			`,
+			variables: {
+				query: options?.query || '',
+				page,
+				pageSize,
+				limit: pageSize,
+				globalState: options?.globalState,
+				sortBy: options?.sortBy,
+				sortOrder: Number(options?.sortOrder),
+				channel: options?.channel,
+				submitted_by: options?.submitter,
+				filter: options?.filter
+			},
 			auth: true
 		}).pipe(
 			map(res => ({
@@ -412,8 +433,8 @@ export namespace RestV2 {
 
 	export interface GetEmotesOptions {
 		query: string;
-		channel: string;
 		submitter: string;
+		channel: string;
 		globalState: 'only' | 'hide';
 		sortBy: 'age' | 'popularity';
 		sortOrder: 0 | 1;
