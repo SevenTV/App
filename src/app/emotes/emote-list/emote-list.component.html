@@ -37,8 +37,8 @@
 		
 			<!-- Pagination menu -->
 			<mat-paginator #paginator (page)="onPageEvent($event)" [@fadeout]="selecting | async"
-				[showFirstLastButtons]="true" [pageIndex]="pageOptions?.page" [length]="pageOptions?.length"
-				[length]="totalEmotes | async" [pageSize]="pageSize | async">
+				[showFirstLastButtons]="true" [pageIndex]="pageOptions?.page"
+				[length]="pageOptions?.length || (totalEmotes | async)" [pageSize]="pageSize | async">
 		
 			</mat-paginator>
 		</div>

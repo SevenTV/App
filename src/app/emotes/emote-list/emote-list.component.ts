@@ -71,7 +71,6 @@ export class EmoteListComponent implements OnInit, AfterViewInit, OnDestroy {
 	loading = new Subject();
 	totalEmotes = new BehaviorSubject<number>(0);
 	resized = new Subject<[number, number]>();
-	skipNextSearchCheck = false;
 
 	@ViewChild('emotesContainer') emotesContainer: ElementRef<HTMLDivElement> | undefined;
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator | undefined;
@@ -115,11 +114,7 @@ export class EmoteListComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.getEmotes(undefined, this.currentSearchOptions).pipe(
 			delay(50),
 			tap(emotes => this.emotes.next(emotes))
-		).subscribe({
-			complete: () => {
-				this.skipNextSearchCheck = true;
-			}
-		});
+		).subscribe();
 	}
 
 	getEmotes(page = 1, options?: Partial<RestV2.GetEmotesOptions>): Observable<EmoteStructure[]> {
@@ -132,7 +127,11 @@ export class EmoteListComponent implements OnInit, AfterViewInit, OnDestroy {
 		};
 
 		const size = this.calculateSizedRows();
-		return this.restService.v2.SearchEmotes((this.pageOptions?.page ?? (page - 1)) + 1, size ?? 16, options ?? this.currentSearchOptions).pipe(
+		return this.restService.v2.SearchEmotes(
+			(this.pageOptions?.page ?? (page - 1)) + 1,
+			Math.max(EmoteListComponent.MINIMUM_EMOTES, size ?? EmoteListComponent.MINIMUM_EMOTES),
+			options ?? this.currentSearchOptions
+		).pipe(
 			takeUntil(this.newPage.pipe(take(1))),
 			tap(res => this.totalEmotes.next(res?.total_estimated_size ?? 0)),
 			delay(200),
@@ -182,12 +181,9 @@ export class EmoteListComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.appService.pushTitleAttributes({ name: 'PageIndex', value: `- ${ev.pageIndex + 1}/${Number((ev.length / ev.pageSize).toFixed(0)) + 1}` });
 
 		// Fetch new set of emotes
-		if (!this.skipNextSearchCheck) {
-			this.getEmotes(ev.pageIndex + 1).pipe(
-				tap(emotes => this.emotes.next(emotes))
-			).subscribe();
-		}
-		this.skipNextSearchCheck = false;
+		this.getEmotes(ev.pageIndex + 1).pipe(
+			tap(emotes => this.emotes.next(emotes))
+		).subscribe();
 	}
 
 	isEmpty(): Observable<boolean> {
@@ -249,7 +245,7 @@ export class EmoteListComponent implements OnInit, AfterViewInit, OnDestroy {
 
 			this.paginator?.page.next({
 				pageIndex: o.page,
-				pageSize: Math.max(16, pageSize),
+				pageSize: Math.max(EmoteListComponent.MINIMUM_EMOTES, pageSize),
 				length: o.length,
 			});
 			this.pageOptions = o;
@@ -260,7 +256,7 @@ export class EmoteListComponent implements OnInit, AfterViewInit, OnDestroy {
 		}
 	}
 
-	ngOnInit(): void {}
+	ngOnInit(): void { }
 	ngOnDestroy(): void {
 		this.loading.complete();
 	}
@@ -273,4 +269,6 @@ export namespace EmoteListComponent {
 		page: number;
 		length: number;
 	}
+
+	export const MINIMUM_EMOTES = 4;
 }
