@@ -142,7 +142,7 @@ export class EmoteListComponent implements OnInit, AfterViewInit, OnDestroy {
 		const size = this.calculateSizedRows();
 		return this.restService.awaitAuth().pipe(
 			switchMap(() => this.restService.v2.SearchEmotes(
-				this.pageOptions?.pageIndex,
+				(this.pageOptions?.pageIndex ?? 0) + 1,
 				Math.max(EmoteListComponent.MINIMUM_EMOTES, size ?? EmoteListComponent.MINIMUM_EMOTES),
 				options ?? this.currentSearchOptions
 			)),
@@ -253,7 +253,7 @@ export class EmoteListComponent implements OnInit, AfterViewInit, OnDestroy {
 			take(1),
 			map(params => {
 				return {
-					page: params.has('page') ? Number(params.get('page')) : 1,
+					page: params.has('page') ? Number(params.get('page')) : 0,
 					search: {
 						sortBy: params.get('sortBy'),
 						sortOrder: params.get('sortOrder'),
