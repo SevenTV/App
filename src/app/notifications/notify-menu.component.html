@@ -9,7 +9,7 @@
 			</div>
 		</div>
 		<div class="quick-actions">
-			<a class="quick-action mark-all-read" (click)="markAllRead()" *ngIf="!clientService.isImpersonating && !allClear">
+			<a class="quick-action mark-all-read" (click)="markAllRead()" *ngIf="!clientService.isImpersonating && !allClear && loaded">
 				Mark All Read
 			</a>
 		</div>
