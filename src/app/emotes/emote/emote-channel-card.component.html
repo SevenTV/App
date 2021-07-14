@@ -1,7 +1,7 @@
 <div matRipple class="emote-channel-card mat-elevation-z1" *ngIf="!!user" [appColor]="themingService.bg.lighten(.2)" [isBackground]="true">
 
 	<!-- Content -->
-	<div class="card-content" [routerLink]="['/users', user.getID() | async]" [appColor]="themingService.bg.lighten(.35)" [isBackground]="true" [onHoverOnly]="true">
+	<a class="card-content" [routerLink]="['/users', user.getID() | async]" [appColor]="themingService.bg.lighten(.35)" [isBackground]="true" [onHoverOnly]="true">
 
 		<!-- Username -->
 		<div class="username-container">
@@ -11,5 +11,5 @@
 		<div class="avatar-container">
 			<app-user-name [user]="user" [showUsername]="false" [size]="[4, 0]" [avatarBorder]="false"></app-user-name>
 		</div>
-	</div>
+	</a>
 </div>
