@@ -130,7 +130,7 @@ export class EmoteListComponent implements OnInit, AfterViewInit, OnDestroy {
 		).subscribe();
 	}
 
-	getEmotes(page = 1, options?: Partial<RestV2.GetEmotesOptions>): Observable<EmoteStructure[]> {
+	getEmotes(page = 0, options?: Partial<RestV2.GetEmotesOptions>): Observable<EmoteStructure[]> {
 		this.emotes.next([]);
 		this.newPage.next(page);
 		const timeout = setTimeout(() => this.loading.next(true), 1000);
@@ -140,11 +140,13 @@ export class EmoteListComponent implements OnInit, AfterViewInit, OnDestroy {
 		};
 
 		const size = this.calculateSizedRows();
-		return this.restService.v2.SearchEmotes(
-			this.pageOptions?.pageIndex,
-			Math.max(EmoteListComponent.MINIMUM_EMOTES, size ?? EmoteListComponent.MINIMUM_EMOTES),
-			options ?? this.currentSearchOptions
-		).pipe(
+		return this.restService.awaitAuth().pipe(
+			switchMap(() => this.restService.v2.SearchEmotes(
+				this.pageOptions?.pageIndex,
+				Math.max(EmoteListComponent.MINIMUM_EMOTES, size ?? EmoteListComponent.MINIMUM_EMOTES),
+				options ?? this.currentSearchOptions
+			)),
+
 			takeUntil(this.newPage.pipe(take(1))),
 			tap(res => this.totalEmotes.next(res?.total_estimated_size ?? 0)),
 			delay(200),
@@ -257,7 +259,7 @@ export class EmoteListComponent implements OnInit, AfterViewInit, OnDestroy {
 		).subscribe({
 			next: opt => {
 				const d = {
-					pageIndex: !isNaN(opt.page) ? opt.page : 1,
+					pageIndex: !isNaN(opt.page) ? opt.page : 0,
 					pageSize: Math.max(EmoteListComponent.MINIMUM_EMOTES, this.calculateSizedRows() ?? 0),
 					length: 0,
 				};

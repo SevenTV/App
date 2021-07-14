@@ -1,8 +1,8 @@
 import { HttpClient, HttpErrorResponse, HttpProgressEvent, HttpResponse } from '@angular/common/http';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
-import { EMPTY, iif, Observable, of, throwError } from 'rxjs';
-import { filter, map, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, EMPTY, iif, Observable, of, throwError } from 'rxjs';
+import { filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { ClientService } from 'src/app/service/client.service';
 import { LocalStorageService } from 'src/app/service/localstorage.service';
 import { RestV1 } from 'src/app/service/rest/rest-v1.structure';
@@ -21,6 +21,8 @@ export class RestService {
 
 	public v1 = new RestV1(this);
 	public v2 = new RestV2(this);
+
+	authenticating = new BehaviorSubject<boolean>(true);
 
 	constructor(
 		@Inject(PLATFORM_ID) private platformId: any,
@@ -58,9 +60,21 @@ export class RestService {
 					])),
 					switchMap(res => !!res.user?.id ? of(res.user) : throwError('Unknown Account')),
 					tap(user => clientService.pushData(user))
-				).subscribe();
+				).subscribe({
+					error: () => this.authenticating.next(false),
+					complete: () => this.authenticating.next(false)
+				});
 			}
 		}, 0);
+	}
+
+	awaitAuth(): Observable<boolean> {
+		return this.authenticating.pipe(
+			filter(b => b === false),
+			take(1),
+
+			switchMap(() => this.clientService.isAuthenticated().pipe(take(1)))
+		);
 	}
 
 	// tslint:disable:typedef
