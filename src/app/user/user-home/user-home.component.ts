@@ -1,6 +1,5 @@
 
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { DataStructure } from '@typings/typings/DataStructure';
 import { asapScheduler, asyncScheduler, BehaviorSubject, from, iif, noop, Observable, of, scheduled, Subject } from 'rxjs';
 import { concatAll, filter, map, mapTo, mergeMap, switchMap, take, takeUntil, tap, toArray } from 'rxjs/operators';
@@ -38,7 +37,6 @@ export class UserHomeComponent implements OnInit, OnDestroy {
 		@Inject(UserComponent) private parent: UserComponent,
 		private cdr: ChangeDetectorRef,
 		private clientService: ClientService,
-		private router: Router,
 		public themingService: ThemingService
 	) { }
 
@@ -93,19 +91,6 @@ export class UserHomeComponent implements OnInit, OnDestroy {
 
 	trackBy(_: number, e: EmoteStructure): any {
 		return e.getID();
-	}
-
-	/**
-	 * Called when the user clicks on an emote card.
-	 *
-	 * Prevent the normal link href event from occuring
-	 */
-	onClickCard(ev: Event, emote: EmoteStructure): void {
-		ev.preventDefault();
-
-		if (typeof emote?.getID() === 'string') {
-			this.router.navigate(['/emotes', emote.getID()]);
-		}
 	}
 
 	ngOnInit(): void {

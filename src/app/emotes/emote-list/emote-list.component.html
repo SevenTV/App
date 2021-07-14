@@ -26,7 +26,7 @@
 					</div>
 
 					<div class="d-flex flex-wrap justify-content-center">
-						<a href (click)="selectEmote($event, emoteEl, emote)"  #emoteEl *ngFor="let emote of emotes | async" class="is-emote-card unstyled-link">
+						<a href (click)="selectEmote($event, emoteEl, emote)" (auxclick)="$event.preventDefault()" #emoteEl *ngFor="let emote of emotes | async" class="is-emote-card unstyled-link">
 							<app-emote-card [emote]="emote" [contextMenu]="contextMenu.emoteMenu" (openContext)="onOpenCardContextMenu($event)">
 				
 							</app-emote-card>

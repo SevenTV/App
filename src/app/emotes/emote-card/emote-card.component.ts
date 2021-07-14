@@ -73,7 +73,7 @@ export class EmoteCardComponent implements OnInit, AfterViewChecked, OnDestroy {
 	 * Middle Mouse Click: open in new tab
 	 */
 	@HostListener('auxclick', ['$event'])
-	onMiddleCLick(ev: MouseEvent): void {
+	onMiddleClick(ev: MouseEvent): void {
 		if (ev.button === 1) {
 			const url = this.router.serializeUrl(this.router.createUrlTree(['/emotes', String(this.emote?.getID())]));
 

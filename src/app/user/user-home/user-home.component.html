@@ -24,12 +24,9 @@
 		Emotes Enabled ({{(channelCount | async) || 0}}/{{((user | async)?.getEmoteSlots() | async) || 0}})
 	</div>
 	<div class="channel-emote-list" [appColor]="themingService.bg.lighten(.1)" [isBackground]="true">
-		<a href class="is-emote-card unstyled-link"
-			(click)="onClickCard($event, emote)"
-			*ngFor="let emote of channelEmotes | async | slice :0:channelShown; trackBy: trackBy; let last = last;"
-		>
-			<app-emote-card [blur]="isBlurred(emote)" [size]="8" [emote]="emote" [contextMenu]="contextMenu.emoteMenu" (openContext)="contextMenu.contextEmote = $event"></app-emote-card>
-		</a>
+		<div class="is-emote-card" *ngFor="let emote of channelEmotes | async | slice :0:channelShown; trackBy: trackBy; let last = last;">
+			<app-emote-card [blur]="isBlurred(emote)" [routerLink]="['/emotes', emote.getID()]" [size]="8" [emote]="emote" [contextMenu]="contextMenu.emoteMenu" (openContext)="contextMenu.contextEmote = $event"></app-emote-card>
+		</div>
 
 		<div *ngIf="channelShown < (channelCount.getValue())">
 			<div *ngTemplateOutlet="showMore; context: { setName: 'channel' }"></div>
